@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="霍加狓寶寶">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <path d="M76 193c-6 19-4 32 9 32s16-13 14-32M178 193c-5 20-2 33 11 33s15-14 11-34" stroke="#7c5b43" stroke-width="14" stroke-linecap="round"/><ellipse cx="137" cy="161" rx="72" ry="43" fill="#9c6f50"/><path d="M86 189h34M91 207h28M176 189h32M181 207h27" stroke="#f4efe6" stroke-width="7" stroke-linecap="round"/><path d="M174 126c20-31 55-31 65 0 8 25-9 48-36 48-25 0-42-23-29-48z" fill="#a67857"/><path d="M197 91l-13-30 29 20 19-23 1 35" fill="#8f6246"/><circle cx="200" cy="128" r="7" fill="#293241"/><circle cx="225" cy="128" r="7" fill="#293241"/><ellipse cx="212" cy="148" rx="10" ry="7" fill="#2f2f35"/><path d="M92 136c-18 7-24 25-12 42" stroke="#6a4c38" stroke-width="11" stroke-linecap="round"/>
+</svg>

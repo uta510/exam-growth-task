@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="藍鯨寶寶">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <path d="M52 161c41-52 130-68 191-20 17 13 13 32-7 42-67 33-148 22-184-22z" fill="#88b9dd"/><path d="M222 137l45-26-14 42 29 27-45-4" fill="#78a8ce"/><ellipse cx="107" cy="138" rx="8" ry="7" fill="#293241"/><path d="M97 173c38 20 86 22 127 4" stroke="#f5fbff" stroke-width="9" stroke-linecap="round" opacity=".9"/><path d="M142 190c-5 24 24 24 31 3" fill="#6f9fc5"/>
+</svg>

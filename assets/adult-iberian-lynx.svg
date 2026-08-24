@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="伊比利亞猞猁">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <ellipse cx="150" cy="169" rx="68" ry="47" fill="#cb9857"/><circle cx="150" cy="96" r="50" fill="#dba863"/><path d="M111 58l-14-42 38 27M189 58l14-42-38 27" fill="#bd884b"/><path d="M108 30l-8-29M192 30l8-29" stroke="#293241" stroke-width="8" stroke-linecap="round"/><circle cx="132" cy="94" r="6" fill="#293241"/><circle cx="168" cy="94" r="6" fill="#293241"/><ellipse cx="150" cy="116" rx="10" ry="7" fill="#2f2f35"/><g fill="#6f4c33" opacity=".5"><circle cx="119" cy="86" r="5"/><circle cx="183" cy="88" r="5"/><circle cx="126" cy="165" r="5"/><circle cx="181" cy="181" r="4"/><circle cx="154" cy="149" r="4"/></g><path d="M86 198c-23 30-3 42 21 15M214 198c23 30 3 42-21 15" stroke="#bd884b" stroke-width="14" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="玳瑁海龜">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <ellipse cx="150" cy="161" rx="72" ry="54" fill="#6ead91"/><path d="M101 139c27-35 71-35 98 0-12 45-86 45-98 0z" fill="#8b5c3c"/><path d="M124 122l22 62M176 122l-22 62M104 154h93" stroke="#f2c879" stroke-width="6" opacity=".85"/><circle cx="150" cy="82" r="34" fill="#7fbea1"/><circle cx="136" cy="80" r="5" fill="#293241"/><circle cx="164" cy="80" r="5" fill="#293241"/><path d="M67 157c-43-20-52 14-12 37M233 157c43-20 52 14 12 37M111 205c-25 33 8 45 30 15M189 205c25 33-8 45-30 15" fill="#699f8c"/>
+</svg>

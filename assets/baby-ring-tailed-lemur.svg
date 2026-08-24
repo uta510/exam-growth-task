@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="尾狐猴寶寶">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <path d="M194 177c53 0 54-73 9-76" stroke="#dcdde2" stroke-width="24" stroke-linecap="round" fill="none"/><path d="M214 103c12 10 15 24 9 40M221 162c-7 15-19 23-35 23" stroke="#293241" stroke-width="10" stroke-linecap="round" fill="none"/><ellipse cx="139" cy="166" rx="53" ry="45" fill="#cfd3d9"/><circle cx="139" cy="96" r="52" fill="#dfe3e8"/><path d="M100 62l-19-28 33 10M178 62l19-28-33 10" fill="#cfd3d9"/><circle cx="122" cy="97" r="16" fill="#fff"/><circle cx="156" cy="97" r="16" fill="#fff"/><circle cx="122" cy="97" r="7" fill="#293241"/><circle cx="156" cy="97" r="7" fill="#293241"/><ellipse cx="139" cy="121" rx="10" ry="7" fill="#293241"/><path d="M101 199c-20 24-1 34 18 12M177 199c20 24 1 34-18 12" stroke="#bfc4cc" stroke-width="14" stroke-linecap="round"/>
+</svg>

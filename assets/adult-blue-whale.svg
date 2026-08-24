@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="藍鯨">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <path d="M28 162c56-69 169-83 236-23 22 20 12 45-18 56-83 32-177 17-218-33z" fill="#6fa6d0"/><path d="M245 138l48-34-13 49 33 33-52-6" fill="#6197bf"/><ellipse cx="92" cy="137" rx="7" ry="6" fill="#293241"/><path d="M82 177c52 26 117 29 171 5" stroke="#f5fbff" stroke-width="10" stroke-linecap="round" opacity=".9"/><path d="M143 196c-8 31 34 32 45 4" fill="#578bb8"/>
+</svg>

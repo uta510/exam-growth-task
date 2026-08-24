@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="伊比利亞猞猁寶寶">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <ellipse cx="150" cy="166" rx="58" ry="45" fill="#d4a365"/><circle cx="150" cy="101" r="54" fill="#e2b575"/><path d="M111 62l-12-37 35 24M189 62l12-37-35 24" fill="#c99355"/><path d="M112 35l-6-22M194 35l6-22" stroke="#293241" stroke-width="7" stroke-linecap="round"/><circle cx="132" cy="99" r="7" fill="#293241"/><circle cx="168" cy="99" r="7" fill="#293241"/><ellipse cx="150" cy="123" rx="10" ry="7" fill="#2f2f35"/><path d="M119 137c18 12 44 12 62 0" stroke="#293241" stroke-width="5" stroke-linecap="round" opacity=".5"/><g fill="#7b583e" opacity=".45"><circle cx="119" cy="87" r="5"/><circle cx="183" cy="89" r="5"/><circle cx="134" cy="161" r="5"/><circle cx="174" cy="178" r="4"/></g><path d="M93 196c-19 25-4 35 17 14M207 196c19 25 4 35-17 14" stroke="#c99355" stroke-width="14" stroke-linecap="round"/>
+</svg>

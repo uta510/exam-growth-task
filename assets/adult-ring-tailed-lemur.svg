@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="尾狐猴">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <path d="M199 177c64-4 68-87 13-91" stroke="#d6d9df" stroke-width="24" stroke-linecap="round" fill="none"/><path d="M214 88c15 12 19 29 12 48M227 155c-9 18-24 28-44 29" stroke="#293241" stroke-width="10" stroke-linecap="round" fill="none"/><ellipse cx="139" cy="168" rx="61" ry="46" fill="#c4c9d1"/><circle cx="139" cy="93" r="48" fill="#dfe3e8"/><path d="M103 59l-21-32 36 13M175 59l21-32-36 13" fill="#c7ccd4"/><circle cx="122" cy="94" r="15" fill="#fff"/><circle cx="156" cy="94" r="15" fill="#fff"/><circle cx="122" cy="94" r="6" fill="#293241"/><circle cx="156" cy="94" r="6" fill="#293241"/><ellipse cx="139" cy="117" rx="10" ry="7" fill="#293241"/><path d="M96 200c-24 29-1 40 22 13M182 200c24 29 1 40-22 13" stroke="#b5bac4" stroke-width="14" stroke-linecap="round"/>
+</svg>

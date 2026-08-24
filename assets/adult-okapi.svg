@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" role="img" aria-label="霍加狓">
+  <rect width="300" height="300" fill="#fbf5ea"/>
+  <circle cx="238" cy="56" r="24" fill="#f5d992" opacity=".45"/>
+  <path d="M28 248c44-22 92-22 134 0s78 22 110 0v52H28z" fill="#dbeedc" opacity=".9"/>
+  <path d="M74 190c-7 30-4 43 12 43s18-18 15-43M184 190c-6 31-2 44 15 44s18-19 12-44" stroke="#70513c" stroke-width="15" stroke-linecap="round"/><ellipse cx="135" cy="157" rx="82" ry="44" fill="#8d6046"/><path d="M78 188h43M83 207h37M181 188h42M187 207h36" stroke="#f4efe6" stroke-width="7" stroke-linecap="round"/><path d="M180 115c22-39 65-39 76-1 9 31-11 57-42 57-29 0-50-25-34-56z" fill="#9a6c4e"/><path d="M199 76l-15-33 32 21 24-29 2 41" fill="#7e573f"/><circle cx="208" cy="123" r="6" fill="#293241"/><circle cx="237" cy="122" r="6" fill="#293241"/><ellipse cx="224" cy="146" rx="12" ry="8" fill="#2f2f35"/><path d="M75 136c-25 9-32 36-17 57" stroke="#604633" stroke-width="11" stroke-linecap="round"/>
+</svg>

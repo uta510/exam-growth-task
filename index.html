@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>段考成長任務表</title>
+    <link rel="stylesheet" href="styles.css?v=20260824-1040" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">七年級下學期</p>
+          <h1>段考成長任務表</h1>
+        </div>
+      </header>
+
+      <section class="control-band" aria-label="科目與段考選擇">
+        <div>
+          <span class="control-label">考試選單</span>
+          <div id="examTabs" class="exam-menu"></div>
+        </div>
+        <div>
+          <span class="control-label">科目</span>
+          <div id="subjectTabs" class="segmented"></div>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        
+        <aside class="control-panel" aria-label="段考控制台">
+          <section class="side-tools" aria-label="段考控制台">
+            <div class="side-top-row">
+              <div class="exam-date-box">
+                <label for="examDateInput">段考日期</label>
+                <input id="examDateInput" type="date">
+                <div id="countdownCard" class="countdown-card">
+                  <div class="countdown-card-title">倒數日</div>
+                  <div id="countdownNumber" class="countdown-number">--</div>
+                  <div id="countdownText" class="countdown-caption">尚未設定日期</div>
+                </div>
+              </div>
+              <div class="global-today-box" aria-label="今日任務">
+                <div class="global-today-head">
+                  <div class="global-today-title-wrap">
+                    <div class="side-title">今日任務</div>
+                    <span id="globalTodayDate" class="global-today-date"></span>
+                  </div>
+                  <button id="editGlobalToday" class="text-button global-today-edit" type="button">編輯</button>
+                </div>
+                <ul id="globalTodayList" class="global-today-list"></ul>
+              </div>
+            </div>
+              <div class="exam-growth-box">
+                <div class="side-title">本次段考各科成長值</div>
+                <div id="examGrowthList" class="exam-growth-list"></div>
+              </div>
+
+              <div class="score-badge side-score-badge" aria-live="polite">
+                <span id="totalScore">0%</span>
+                <small>完成百分比</small>
+              </div>
+              <div class="backup-tools" aria-label="資料備份與匯入">
+                <button id="backupData" class="text-button" type="button">備份資料</button>
+                <button id="exportSheets" class="text-button" type="button">匯出 Sheets</button>
+                <button id="importData" class="text-button" type="button">匯入資料</button>
+                <button id="openCloudSettings" class="text-button" type="button">雲端同步</button>
+                <input id="importFile" type="file" accept="application/json,.json" hidden>
+                <p id="backupStatus" class="backup-status" aria-live="polite"></p>
+                <p id="cloudStatus" class="backup-status cloud-status" aria-live="polite">雲端尚未連線</p>
+              </div>
+          </section>
+        </aside>
+
+        <aside class="animal-panel" aria-live="polite">
+          <div class="animal-scene">
+            <div id="habitat" class="habitat"></div>
+            <div id="animalArt" class="animal-art"></div>
+          </div>
+          <div class="animal-copy">
+            <p id="selectedPath" class="eyebrow"></p>
+            <h2 id="animalName"></h2>
+            <p id="animalIntroText" class="animal-intro"></p>
+            <div class="progress-wrap">
+              <div class="progress-top">
+                <span id="scoreText">0 / 30</span>
+                <span id="stageText">寶寶版</span>
+              </div>
+              <div class="progress-track">
+                <div id="progressFill" class="progress-fill"></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="task-panel">
+          <div class="task-head">
+            <div>
+              <p class="eyebrow">任務清單</p>
+              <h2 id="taskTitle"></h2>
+            </div>
+            <div class="task-actions">
+              <button id="openTracker" class="text-button tracker-open-task" type="button">備註追蹤清單</button>
+              <button id="editTasks" class="text-button" type="button">編輯</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th id="doneHeader" class="done-col">完成</th>
+                  <th>任務</th>
+                  <th class="date-col">完成日期</th>
+                  <th id="scoreHeader" class="score-col">得分</th>
+                  <th class="note-col">備註</th>
+                  <th class="today-col">今日</th>
+                </tr>
+              </thead>
+              <tbody id="taskRows"></tbody>
+            </table>
+          </div>
+          <div id="taskPager" class="task-pager" aria-label="任務分頁"></div>
+        </section>
+      </section>
+
+      <section class="overview-band" aria-label="全部科目進度">
+        <div class="overview-head">
+          <p class="eyebrow">全部進度</p>
+          <h2>科目成長表</h2>
+        </div>
+        <div id="overviewGrid" class="overview-grid"></div>
+      </section>
+    </main>
+
+    <div id="trackerDialog" class="tracker-dialog" aria-hidden="true">
+      <div class="tracker-card" role="dialog" aria-modal="true" aria-labelledby="trackerTitle">
+        <div class="tracker-card-head">
+          <div>
+            <p class="eyebrow">備註追蹤</p>
+            <h2 id="trackerTitle">追蹤清單</h2>
+          </div>
+          <button id="closeTracker" class="icon-button" type="button" aria-label="關閉備註追蹤" title="關閉">×</button>
+        </div>
+        <ul id="noteTrackerList" class="tracker-list"></ul>
+      </div>
+    </div>
+
+    <div id="taskEditorDialog" class="tracker-dialog task-editor-dialog" aria-hidden="true">
+      <div class="tracker-card task-editor-card" role="dialog" aria-modal="true" aria-labelledby="taskEditorTitle">
+        <div class="tracker-card-head">
+          <div>
+            <p class="eyebrow">任務管理</p>
+            <h2 id="taskEditorTitle">編輯任務</h2>
+          </div>
+          <button id="closeTaskEditor" class="icon-button" type="button" aria-label="關閉任務管理" title="關閉">×</button>
+        </div>
+        <div id="taskEditorRows" class="task-editor-list"></div>
+        <div class="task-editor-footer">
+          <button id="editorAddTask" class="text-button add-task-button" type="button">新增任務</button>
+          <button id="finishTaskEditor" class="text-button" type="button">完成</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="globalTodayEditorDialog" class="tracker-dialog global-today-editor-dialog" aria-hidden="true">
+      <div class="tracker-card global-today-editor-card" role="dialog" aria-modal="true" aria-labelledby="globalTodayEditorTitle">
+        <div class="tracker-card-head">
+          <div>
+            <p class="eyebrow">今日任務</p>
+            <h2 id="globalTodayEditorTitle">編輯今日任務</h2>
+          </div>
+          <button id="closeGlobalTodayEditor" class="icon-button" type="button" aria-label="關閉今日任務編輯" title="關閉">×</button>
+        </div>
+        <ul id="globalTodayEditorList" class="global-today-editor-list"></ul>
+        <div class="task-editor-footer">
+          <button id="finishGlobalTodayEditor" class="text-button" type="button">完成</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="cloudSettingsDialog" class="tracker-dialog cloud-settings-dialog" aria-hidden="true">
+      <div class="tracker-card cloud-settings-card" role="dialog" aria-modal="true" aria-labelledby="cloudSettingsTitle">
+        <div class="tracker-card-head">
+          <div>
+            <p class="eyebrow">Supabase</p>
+            <h2 id="cloudSettingsTitle">雲端同步設定</h2>
+          </div>
+          <button id="closeCloudSettings" class="icon-button" type="button" aria-label="關閉雲端同步設定" title="關閉">×</button>
+        </div>
+        <div class="cloud-form">
+          <label>Project URL<input id="cloudProjectUrl" type="url" placeholder="https://xxxx.supabase.co"></label>
+          <label>Publishable / anon key<input id="cloudAnonKey" type="password" autocomplete="off" placeholder="只貼公開 key，不要貼 service_role"></label>
+          <div class="cloud-actions">
+            <button id="saveCloudSettings" class="text-button" type="button">儲存設定</button>
+          </div>
+          <label>Email<input id="cloudEmail" type="email" autocomplete="email" placeholder="登入信箱"></label>
+          <label>Password<input id="cloudPassword" type="password" autocomplete="current-password" placeholder="登入密碼"></label>
+          <div class="cloud-actions">
+            <button id="cloudSignUp" class="text-button" type="button">建立帳號</button>
+            <button id="cloudSignIn" class="text-button" type="button">登入</button>
+            <button id="cloudSignOut" class="text-button" type="button">登出</button>
+          </div>
+          <div class="cloud-actions">
+            <button id="cloudUpload" class="text-button" type="button">上傳本機資料</button>
+            <button id="cloudDownload" class="text-button" type="button">下載雲端資料</button>
+            <button id="cloudBackup" class="text-button" type="button">建立雲端備份</button>
+          </div>
+          <p id="cloudDialogStatus" class="cloud-dialog-status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js?v=20260824-1040"></script>
+  </body>
+</html>
