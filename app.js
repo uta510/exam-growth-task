@@ -748,6 +748,8 @@ let state = loadState();
 let selectedTerm = "八年級上學期";
 let selectedSubject = "國文";
 let selectedExam = "第一次段考";
+let learningStatusMode = "day";
+let learningStatusDate = todayString();
 let cloudClient = null;
 let cloudUser = null;
 let cloudSaveTimer = null;
@@ -779,6 +781,7 @@ function animalLookupKey(subject, exam, term = selectedTerm) {
 function legacyPlanKey(subject, exam) { return subject + "-" + exam; }
 function planKey(subject, exam, term = selectedTerm) { return term + "-" + subject + "-" + exam; }
 function globalTodayKey() { return "_globalTodayTasks"; }
+function blankDefaultKey() { return "_blankDefault"; }
 function shouldClearTaskList(term = selectedTerm, exam = selectedExam) {
   if (term === "自主學習") return exam !== "七升八的暑假";
   return term.startsWith("八年級") || term.startsWith("九年級");
@@ -797,22 +800,20 @@ function makeTasks(subject, exam, term = selectedTerm) {
 function getTasks(subject, exam, term = selectedTerm) {
   const key = planKey(subject, exam, term);
   const legacyKey = legacyPlanKey(subject, exam);
+  if (state[blankDefaultKey()] && !Array.isArray(state[key]) && !(state._customTasks && state._customTasks[key])) {
+    return [];
+  }
   if (shouldClearTaskList(term, exam)) {
-    let changed = false;
-    if (!Array.isArray(state[key]) || state[key].length) {
+    if (state._customTasks && state._customTasks[key] && Array.isArray(state[key])) {
+      state[key] = state[key].map((task, index) => normalizeTask(task, key, index));
+      return state[key];
+    }
+    if (!Array.isArray(state[key])) {
       state[key] = [];
-      changed = true;
-    }
-    if (state._customTasks && state._customTasks[key]) {
-      delete state._customTasks[key];
-      changed = true;
-    }
-    if (!state._signatures) state._signatures = {};
-    if (state._signatures[key] !== "") {
+      if (!state._signatures) state._signatures = {};
       state._signatures[key] = "";
-      changed = true;
+      saveState();
     }
-    if (changed) saveState();
     return state[key];
   }
   if (state._customTasks && state._customTasks[key] && Array.isArray(state[key])) {
@@ -834,7 +835,15 @@ function getTasks(subject, exam, term = selectedTerm) {
   }
   return state[key];
 }
-function loadState() { try { return JSON.parse(localStorage.getItem(storageKey)) || {}; } catch { return {}; } }
+function loadState() {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return { [blankDefaultKey()]: true };
+    return JSON.parse(raw) || {};
+  } catch {
+    return { [blankDefaultKey()]: true };
+  }
+}
 function saveState() {
   localStorage.setItem(storageKey, JSON.stringify(state));
   if (!cloudApplyingRemote && !suppressCloudQueue) queueCloudSave();
@@ -854,6 +863,7 @@ function normalizeTask(task, key, index) {
   };
 }
 function markCustomTasks(key, tasks) {
+  delete state[blankDefaultKey()];
   if (!state._customTasks) state._customTasks = {};
   if (!state._signatures) state._signatures = {};
   state._customTasks[key] = true;
@@ -1082,8 +1092,154 @@ function todayDisplayString() {
   return todayString().split("-").join("/");
 }
 
+function dateFromString(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return null;
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+function dateToString(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+}
+
+function dateDisplay(value) {
+  return String(value || "").replace(/-/g, "/");
+}
+
+function addDays(date, amount) {
+  const next = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  next.setDate(next.getDate() + amount);
+  return next;
+}
+
+function startOfWeek(date) {
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  return addDays(date, diff);
+}
+
+function monthTitle(date) {
+  return date.getFullYear() + "年" + (date.getMonth() + 1) + "月";
+}
+
+function learningStatusEntries() {
+  const entries = [];
+  allExamItems().forEach((item) => {
+    subjectsForExport(item.term, item.exam).forEach((subject) => {
+      getTasks(subject, item.exam, item.term).forEach((task, index) => {
+        if (!isTaskComplete(task)) return;
+        entries.push({
+          date: task.date,
+          term: item.term,
+          exam: item.exam,
+          subject,
+          number: index + 1,
+          title: task.title,
+        });
+      });
+    });
+  });
+  return entries.sort((a, b) => a.date.localeCompare(b.date) || a.subject.localeCompare(b.subject) || a.number - b.number);
+}
+
+function entriesByDate(entries) {
+  return entries.reduce((map, entry) => {
+    if (!map[entry.date]) map[entry.date] = [];
+    map[entry.date].push(entry);
+    return map;
+  }, {});
+}
+
+function statusTaskList(entries) {
+  if (!entries.length) return '<p class="status-empty">這一天還沒有完成任務</p>';
+  return '<ul class="status-task-list">' + entries.map((entry) => (
+    '<li><em>' + escapeHtml(entry.subject) + '</em><div class="status-task-main"><strong>' + escapeHtml(entry.title) + '</strong><small>' + escapeHtml(termShortLabel(entry.term) + " " + entry.exam + "｜任務 " + entry.number) + '</small></div></li>'
+  )).join("") + '</ul>';
+}
+
+function renderLearningStatus() {
+  const body = document.querySelector("#learningStatusBody");
+  const title = document.querySelector("#learningStatusTitle");
+  if (!body || !title) return;
+  const baseDate = dateFromString(learningStatusDate) || dateFromString(todayString());
+  learningStatusDate = dateToString(baseDate);
+  const entries = learningStatusEntries();
+  const grouped = entriesByDate(entries);
+  document.querySelectorAll("[data-status-mode]").forEach((button) => button.classList.toggle("active", button.dataset.statusMode === learningStatusMode));
+
+  if (learningStatusMode === "day") {
+    const dayEntries = grouped[learningStatusDate] || [];
+    title.textContent = dateDisplay(learningStatusDate) + " 學習狀況";
+    body.innerHTML = '<div class="status-summary"><h3>' + dateDisplay(learningStatusDate) + '</h3><span>完成 ' + dayEntries.length + ' 個任務</span></div>' + statusTaskList(dayEntries);
+    return;
+  }
+
+  if (learningStatusMode === "week") {
+    const start = startOfWeek(baseDate);
+    const days = Array.from({ length: 7 }, (_, index) => addDays(start, index));
+    const weekEntries = days.flatMap((date) => grouped[dateToString(date)] || []);
+    title.textContent = dateDisplay(dateToString(start)) + " - " + dateDisplay(dateToString(addDays(start, 6))) + " 學習狀況";
+    body.innerHTML = '<div class="status-summary"><h3>本週完成</h3><span>完成 ' + weekEntries.length + ' 個任務</span></div><div class="status-week-grid">' + days.map((date, index) => {
+      const key = dateToString(date);
+      const dayEntries = grouped[key] || [];
+      return '<section class="status-day-column"><div class="status-day-head"><button type="button" data-status-date="' + key + '">' + ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][index] + ' ' + (date.getMonth() + 1) + '/' + date.getDate() + '</button><small>' + dayEntries.length + ' 個任務</small></div><ul class="status-day-items">' + (dayEntries.length ? dayEntries.map((entry) => '<li><em>' + escapeHtml(entry.subject) + '</em>' + escapeHtml(entry.title) + '</li>').join("") : '<li class="status-empty-day">沒有完成任務</li>') + '</ul></section>';
+    }).join("") + '</div>';
+  } else {
+    const first = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+    const gridStart = addDays(first, -first.getDay());
+    const days = Array.from({ length: 42 }, (_, index) => addDays(gridStart, index));
+    const monthEntries = entries.filter((entry) => {
+      const date = dateFromString(entry.date);
+      return date && date.getFullYear() === baseDate.getFullYear() && date.getMonth() === baseDate.getMonth();
+    });
+    title.textContent = monthTitle(baseDate) + " 學習狀況";
+    body.innerHTML = '<div class="status-summary"><h3>' + monthTitle(baseDate) + '</h3><span>完成 ' + monthEntries.length + ' 個任務</span></div><div class="status-month-grid">' + ["日", "一", "二", "三", "四", "五", "六"].map((day) => '<div class="status-weekday">' + day + '</div>').join("") + days.map((date) => {
+      const key = dateToString(date);
+      const dayEntries = grouped[key] || [];
+      const muted = date.getMonth() !== baseDate.getMonth();
+      const isToday = key === todayString();
+      return '<section class="status-calendar-cell' + (muted ? ' is-muted' : '') + (isToday ? ' is-today' : '') + '"><div class="status-calendar-date"><button type="button" data-status-date="' + key + '">' + date.getDate() + '</button>' + (dayEntries.length ? '<span>' + dayEntries.length + '項</span>' : '') + '</div><div class="status-calendar-items">' + dayEntries.slice(0, 3).map((entry) => '<p>' + escapeHtml(entry.subject + "｜" + entry.title) + '</p>').join("") + (dayEntries.length > 3 ? '<p>還有 ' + (dayEntries.length - 3) + ' 項</p>' : '') + '</div></section>';
+    }).join("") + '</div>';
+  }
+
+  body.querySelectorAll("[data-status-date]").forEach((button) => button.addEventListener("click", () => {
+    learningStatusDate = button.dataset.statusDate;
+    learningStatusMode = "day";
+    renderLearningStatus();
+  }));
+}
+
+function shiftLearningStatus(amount) {
+  const baseDate = dateFromString(learningStatusDate) || dateFromString(todayString());
+  if (learningStatusMode === "day") {
+    learningStatusDate = dateToString(addDays(baseDate, amount));
+  } else if (learningStatusMode === "week") {
+    learningStatusDate = dateToString(addDays(baseDate, amount * 7));
+  } else {
+    learningStatusDate = dateToString(new Date(baseDate.getFullYear(), baseDate.getMonth() + amount, 1));
+  }
+  renderLearningStatus();
+}
+
+function openLearningStatusDialog() {
+  const dialog = document.querySelector("#learningStatusDialog");
+  dialog.classList.add("open");
+  dialog.setAttribute("aria-hidden", "false");
+  renderLearningStatus();
+}
+
+function closeLearningStatusDialog() {
+  const dialog = document.querySelector("#learningStatusDialog");
+  dialog.classList.remove("open");
+  dialog.setAttribute("aria-hidden", "true");
+}
+
 function completedScore(tasks) { return tasks.reduce((sum, task) => sum + (isTaskComplete(task) ? task.points : 0), 0); }
 function targetScore(tasks) { return tasks.reduce((sum, task) => sum + task.points, 0); }
+function completedTaskCount(tasks) { return tasks.filter(isTaskComplete).length; }
 function termShortLabel(term) {
   return term.replace("年級", "").replace("學期", "").replace("上", "上").replace("下", "下");
 }
@@ -1133,9 +1289,10 @@ function renderExamGrowth() {
   if (!list) return;
   list.innerHTML = currentSubjects().map((subject) => {
     const tasks = getTasks(subject, selectedExam, selectedTerm);
-    const score = completedScore(tasks);
-    const target = targetScore(tasks);
-    return '<div class="growth-row"><span>' + subject + '</span><strong>' + score + '/' + target + '</strong></div>';
+    const score = completedTaskCount(tasks);
+    const target = tasks.length;
+    const percent = target ? Math.round((score / target) * 100) : 0;
+    return '<div class="growth-row"><span>' + subject + '</span><strong>' + score + '/' + target + '（' + percent + '%）</strong></div>';
   }).join("");
 }
 
@@ -1143,15 +1300,15 @@ function renderAnimal() {
   const termKey = animalLookupKey(selectedSubject, selectedExam, selectedTerm);
   const key = legacyPlanKey(selectedSubject, selectedExam);
   const tasks = getTasks(selectedSubject, selectedExam, selectedTerm);
-  const score = completedScore(tasks);
+  const score = completedTaskCount(tasks);
   const [animalName, accent, habitat] = termAnimals[termKey] || animals[key] || animals[legacyPlanKey(normalizeSubjectForTerm(selectedSubject, "七年級下學期"), selectedExam)] || [selectedSubject, "#c8bddf", "tree"];
-  const target = targetScore(tasks);
+  const target = tasks.length;
   const mature = target > 0 && score >= target;
   const percent = target ? Math.min(100, Math.round((score / target) * 100)) : 0;
   document.querySelector("#selectedPath").textContent = selectedTerm + "｜" + selectedSubject + "｜" + selectedExam;
   document.querySelector("#animalName").textContent = mature ? animalName : animalName + "寶寶";
   document.querySelector("#scoreText").textContent = score + " / " + target;
-  document.querySelector("#stageText").textContent = "";
+  document.querySelector("#stageText").textContent = percent + "%";
   const info = animalInfo[animalName] || "這種動物有自己的生活環境與習性。牠每天依靠本能尋找食物、躲避危險，也會慢慢長大。完成複習任務就像動物累積生存能力，一步一步把今天該做的事做好，成長就會看得見。";
   document.querySelector("#animalIntroText").textContent = info;
   document.querySelector("#progressFill").style.width = percent + "%";
@@ -1225,7 +1382,6 @@ function renderTasks() {
   document.querySelector("#taskTitle").textContent = selectedTerm + " " + selectedSubject + " " + selectedExam;
   document.querySelector("#editTasks").textContent = "編輯";
   document.querySelector("#doneHeader").textContent = "完成";
-  document.querySelector("#scoreHeader").textContent = "得分";
   document.querySelector("#taskRows").innerHTML = visibleTasks.map((task, offset) => {
     const index = start + offset;
     const complete = isTaskComplete(task);
@@ -1233,7 +1389,7 @@ function renderTasks() {
     const noteDoneClass = task.noteDone ? " is-note-done" : "";
     const inToday = isGlobalTodayTaskSelected(selectedTerm, selectedExam, selectedSubject, task.id);
     const todayLabel = inToday ? "已加" : complete ? "完成" : "加入";
-    return '<tr class="' + (complete ? 'is-done' : '') + '"><td class="done-col"><input type="checkbox" ' + (task.done ? 'checked' : '') + ' data-index="' + index + '" aria-label="完成 ' + escapeHtml(task.title) + '"></td><td><span class="task-number">' + taskNumber + '.</span>' + escapeHtml(task.title) + '</td><td class="date-col"><input class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" value="' + escapeHtml(formatTaskDate(task.date)) + '" data-date-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 完成日期"></td><td class="score-col">' + (complete ? task.points : 0) + '/' + task.points + '</td><td class="note-col"><input class="note-input' + noteDoneClass + '" type="text" value="' + escapeHtml(task.note || '') + '" data-note-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 備註" placeholder="備註"></td><td class="today-col"><button class="add-global-today" type="button" data-add-global-index="' + index + '" ' + (complete && !inToday ? 'disabled' : '') + '>' + todayLabel + '</button></td></tr>';
+    return '<tr class="' + (complete ? 'is-done' : '') + '"><td class="done-col"><input type="checkbox" ' + (task.done ? 'checked' : '') + ' data-index="' + index + '" aria-label="完成 ' + escapeHtml(task.title) + '"></td><td><span class="task-number">' + taskNumber + '.</span>' + escapeHtml(task.title) + '</td><td class="date-col"><input class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" value="' + escapeHtml(formatTaskDate(task.date)) + '" data-date-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 完成日期"></td><td class="note-col"><input class="note-input' + noteDoneClass + '" type="text" value="' + escapeHtml(task.note || '') + '" data-note-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 備註" placeholder="備註"></td><td class="today-col"><button class="add-global-today" type="button" data-add-global-index="' + index + '" ' + (complete && !inToday ? 'disabled' : '') + '>' + todayLabel + '</button></td></tr>';
   }).join("");
   const pager = document.querySelector("#taskPager");
   pager.innerHTML = Array.from({ length: totalPages }, (_, i) => {
@@ -1274,12 +1430,10 @@ function saveTaskEditor() {
     const oldIndex = Number(row.dataset.editorRow);
     const current = normalizeTask(tasks[oldIndex] || {}, key, index);
     const titleInput = row.querySelector("[data-editor-title]");
-    const pointsInput = row.querySelector("[data-editor-points]");
     return {
       ...current,
       id: current.id || key + "-" + index,
-      title: (titleInput && titleInput.value.trim()) || "未命名任務",
-      points: Math.max(0, Number(pointsInput ? pointsInput.value : current.points) || 0)
+      title: (titleInput && titleInput.value.trim()) || "未命名任務"
     };
   });
   tasks.splice(0, tasks.length, ...updatedTasks);
@@ -1293,19 +1447,12 @@ function renderTaskEditor() {
   const rows = document.querySelector("#taskEditorRows");
   if (!title || !rows) return;
   title.textContent = selectedTerm + " " + selectedSubject + " " + selectedExam;
-  rows.innerHTML = tasks.length ? tasks.map((task, index) => '<div class="task-editor-row" data-editor-row="' + index + '"><button class="drag-handle" type="button" draggable="true" data-editor-drag="' + index + '" aria-label="拖曳第 ' + (index + 1) + ' 個任務排序" title="拖曳排序">≡</button><span class="task-editor-number">' + (index + 1) + '.</span><input class="task-title-input" type="text" value="' + escapeHtml(task.title) + '" data-editor-title="' + index + '" aria-label="第 ' + (index + 1) + ' 個任務內容"><input class="points-input" type="number" min="0" max="99" step="1" value="' + escapeHtml(task.points) + '" data-editor-points="' + index + '" aria-label="第 ' + (index + 1) + ' 個任務配分"><button class="delete-task-button" type="button" data-editor-delete="' + index + '" aria-label="刪除第 ' + (index + 1) + ' 個任務">×</button></div>').join("") : '<p class="empty-note">目前沒有任務，請新增任務。</p>';
+  rows.innerHTML = tasks.length ? tasks.map((task, index) => '<div class="task-editor-row" data-editor-row="' + index + '"><button class="drag-handle" type="button" draggable="true" data-editor-drag="' + index + '" aria-label="拖曳第 ' + (index + 1) + ' 個任務排序" title="拖曳排序">≡</button><span class="task-editor-number">' + (index + 1) + '.</span><input class="task-title-input" type="text" value="' + escapeHtml(task.title) + '" data-editor-title="' + index + '" aria-label="第 ' + (index + 1) + ' 個任務內容"><button class="delete-task-button" type="button" data-editor-delete="' + index + '" aria-label="刪除第 ' + (index + 1) + ' 個任務">×</button></div>').join("") : '<p class="empty-note">目前沒有任務，請新增任務。</p>';
   rows.querySelectorAll("[data-editor-title]").forEach((input) => input.addEventListener("input", () => {
     const task = tasks[Number(input.dataset.editorTitle)];
     task.title = input.value.trim() || "未命名任務";
     markCustomTasks(key, tasks);
     render();
-  }));
-  rows.querySelectorAll("[data-editor-points]").forEach((input) => input.addEventListener("change", () => {
-    const task = tasks[Number(input.dataset.editorPoints)];
-    task.points = Math.max(0, Number(input.value) || 0);
-    markCustomTasks(key, tasks);
-    render();
-    renderTaskEditor();
   }));
   rows.querySelectorAll("[data-editor-delete]").forEach((button) => button.addEventListener("click", () => {
     tasks.splice(Number(button.dataset.editorDelete), 1);
@@ -1368,13 +1515,25 @@ function renderOverview() {
   let examTarget = 0;
   currentSubjects().forEach((subject) => {
     const tasks = getTasks(subject, selectedExam, selectedTerm);
-    examScore += completedScore(tasks);
-    examTarget += targetScore(tasks);
+    examScore += completedTaskCount(tasks);
+    examTarget += tasks.length;
   });
   const totalPercent = examTarget ? Math.round((examScore / examTarget) * 100) : 0;
   document.querySelector("#totalScore").textContent = totalPercent + "%";
 }
-function render() { selectedSubject = normalizeSubjectForTerm(selectedSubject, selectedTerm, selectedExam); document.querySelector(".topbar .eyebrow").textContent = selectedTerm; renderTabs(); renderAnimal(); renderTasks(); renderGlobalTodayTasks(); renderExamDate(); renderExamGrowth(); renderOverview(); }
+function render() {
+  selectedSubject = normalizeSubjectForTerm(selectedSubject, selectedTerm, selectedExam);
+  document.querySelector(".topbar .eyebrow").textContent = selectedTerm;
+  renderTabs();
+  renderAnimal();
+  renderTasks();
+  renderGlobalTodayTasks();
+  renderExamDate();
+  renderExamGrowth();
+  renderOverview();
+  const learningDialog = document.querySelector("#learningStatusDialog");
+  if (learningDialog && learningDialog.classList.contains("open")) renderLearningStatus();
+}
 function generatedAnimalImage(src, label) {
   return '<img class="generated-animal" src="' + src + '" alt="' + label + '">';
 }
@@ -1549,11 +1708,12 @@ async function pullCloudState(options = {}) {
     if (!data || !data.data) {
       cloudSyncing = false;
       await pushCloudState({ silent: options.silent });
-      if (!options.silent) setCloudDialogStatus("雲端尚無資料，已先上傳目前這份", "ok");
+      if (!options.silent) setCloudDialogStatus(state[blankDefaultKey()] ? "雲端尚無資料，已先建立空白資料" : "雲端尚無資料，已先上傳目前這份", "ok");
       return true;
     }
     cloudApplyingRemote = true;
     state = data.data && typeof data.data === "object" && !Array.isArray(data.data) ? data.data : {};
+    delete state[blankDefaultKey()];
     localStorage.setItem(storageKey, JSON.stringify(state));
     if (data.current_view && data.current_view.term && data.current_view.exam) {
       selectedTerm = data.current_view.term;
@@ -1697,6 +1857,7 @@ function subjectsForExport(term, exam) {
   return isEightGradeTerm(term) || isEightGradeLearning(term, exam) || isNinthGradeScienceExam(term, exam) ? eightGradeSubjects : subjects;
 }
 function prepareCompleteBackupData() {
+  if (state[blankDefaultKey()]) return JSON.parse(JSON.stringify(state));
   allExamItems().forEach((item) => {
     subjectsForExport(item.term, item.exam).forEach((subject) => {
       getTasks(subject, item.exam, item.term);
@@ -1707,7 +1868,7 @@ function prepareCompleteBackupData() {
 function exportSheetsCsv() {
   const now = new Date();
   const stamp = now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + "-" + String(now.getHours()).padStart(2, "0") + String(now.getMinutes()).padStart(2, "0");
-  const headers = ["分類", "年級學期", "考試/自主學習", "科目", "任務編號", "任務內容", "完成勾選", "完成日期", "已得分", "配分", "備註", "備註追蹤完成", "備註完成日期", "動物", "階段", "匯出時間"];
+  const headers = ["分類", "年級學期", "考試/自主學習", "科目", "任務編號", "任務內容", "完成勾選", "完成日期", "備註", "備註追蹤完成", "備註完成日期", "動物", "階段", "匯出時間"];
   const rows = [headers];
   allExamItems().forEach((item) => {
     subjectsForExport(item.term, item.exam).forEach((subject) => {
@@ -1716,8 +1877,9 @@ function exportSheetsCsv() {
       const [animalName] = termAnimals[termKey] || animals[legacyPlanKey(subject, item.exam)] || [subject];
       getTasks(subject, item.exam, item.term).forEach((task, index) => {
         const complete = isTaskComplete(task);
-        const target = targetScore(getTasks(subject, item.exam, item.term));
-        const score = completedScore(getTasks(subject, item.exam, item.term));
+        const subjectTasks = getTasks(subject, item.exam, item.term);
+        const target = subjectTasks.length;
+        const score = completedTaskCount(subjectTasks);
         rows.push([
           item.group,
           item.term,
@@ -1727,8 +1889,6 @@ function exportSheetsCsv() {
           task.title,
           task.done ? "是" : "否",
           task.date || "",
-          complete ? task.points : 0,
-          task.points,
           task.note || "",
           task.noteDone ? "是" : "否",
           task.noteDoneDate || "",
@@ -1771,6 +1931,7 @@ function importDataFromFile(file) {
       const nextState = parsed && parsed.data && typeof parsed.data === "object" ? parsed.data : parsed;
       if (!nextState || Array.isArray(nextState) || typeof nextState !== "object") throw new Error("檔案格式不正確");
       state = nextState;
+      delete state[blankDefaultKey()];
       saveState();
       if (parsed && parsed.currentView && parsed.currentView.term && parsed.currentView.exam) {
         selectedTerm = parsed.currentView.term;
@@ -1841,6 +2002,20 @@ document.querySelector("#editGlobalToday").addEventListener("click", openGlobalT
 document.querySelector("#closeGlobalTodayEditor").addEventListener("click", closeGlobalTodayEditor);
 document.querySelector("#finishGlobalTodayEditor").addEventListener("click", closeGlobalTodayEditor);
 document.querySelector("#globalTodayEditorDialog").addEventListener("click", (event) => { if (event.target.id === "globalTodayEditorDialog") closeGlobalTodayEditor(); });
+
+document.querySelector("#openLearningStatus").addEventListener("click", openLearningStatusDialog);
+document.querySelector("#closeLearningStatus").addEventListener("click", closeLearningStatusDialog);
+document.querySelector("#learningStatusDialog").addEventListener("click", (event) => { if (event.target.id === "learningStatusDialog") closeLearningStatusDialog(); });
+document.querySelectorAll("[data-status-mode]").forEach((button) => button.addEventListener("click", () => {
+  learningStatusMode = button.dataset.statusMode;
+  renderLearningStatus();
+}));
+document.querySelector("#statusPrev").addEventListener("click", () => shiftLearningStatus(-1));
+document.querySelector("#statusToday").addEventListener("click", () => {
+  learningStatusDate = todayString();
+  renderLearningStatus();
+});
+document.querySelector("#statusNext").addEventListener("click", () => shiftLearningStatus(1));
 
 document.querySelector("#editTasks").addEventListener("click", openTaskEditorDialog);
 document.querySelector("#closeTaskEditor").addEventListener("click", closeTaskEditorDialog);

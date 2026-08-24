@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>段考成長任務表</title>
-    <link rel="stylesheet" href="styles.css?v=20260824-1040" />
+    <link rel="stylesheet" href="styles.css?v=20260824-2000" />
   </head>
   <body>
     <main class="app-shell">
@@ -22,7 +22,10 @@
         </div>
         <div>
           <span class="control-label">科目</span>
-          <div id="subjectTabs" class="segmented"></div>
+          <div class="subject-control-row">
+            <div id="subjectTabs" class="segmented"></div>
+            <button id="openLearningStatus" class="text-button learning-status-button" type="button">學習狀況</button>
+          </div>
         </div>
       </section>
 
@@ -52,7 +55,7 @@
               </div>
             </div>
               <div class="exam-growth-box">
-                <div class="side-title">本次段考各科成長值</div>
+                <div class="side-title">本次段考各科完成比</div>
                 <div id="examGrowthList" class="exam-growth-list"></div>
               </div>
 
@@ -111,7 +114,6 @@
                   <th id="doneHeader" class="done-col">完成</th>
                   <th>任務</th>
                   <th class="date-col">完成日期</th>
-                  <th id="scoreHeader" class="score-col">得分</th>
                   <th class="note-col">備註</th>
                   <th class="today-col">今日</th>
                 </tr>
@@ -178,6 +180,31 @@
       </div>
     </div>
 
+    <div id="learningStatusDialog" class="tracker-dialog learning-status-dialog" aria-hidden="true">
+      <div class="tracker-card learning-status-card" role="dialog" aria-modal="true" aria-labelledby="learningStatusTitle">
+        <div class="tracker-card-head learning-status-head">
+          <div>
+            <p class="eyebrow">學習狀況</p>
+            <h2 id="learningStatusTitle">完成任務行事曆</h2>
+          </div>
+          <button id="closeLearningStatus" class="icon-button" type="button" aria-label="關閉學習狀況" title="關閉">×</button>
+        </div>
+        <div class="learning-status-toolbar">
+          <div class="status-mode-tabs" aria-label="學習狀況顯示模式">
+            <button class="active" type="button" data-status-mode="day">日</button>
+            <button type="button" data-status-mode="week">週</button>
+            <button type="button" data-status-mode="month">月</button>
+          </div>
+          <div class="status-date-tools">
+            <button id="statusPrev" class="text-button" type="button">上一個</button>
+            <button id="statusToday" class="text-button" type="button">今天</button>
+            <button id="statusNext" class="text-button" type="button">下一個</button>
+          </div>
+        </div>
+        <div id="learningStatusBody" class="learning-status-body"></div>
+      </div>
+    </div>
+
     <div id="cloudSettingsDialog" class="tracker-dialog cloud-settings-dialog" aria-hidden="true">
       <div class="tracker-card cloud-settings-card" role="dialog" aria-modal="true" aria-labelledby="cloudSettingsTitle">
         <div class="tracker-card-head">
@@ -211,6 +238,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=20260824-1040"></script>
+    <script src="app.js?v=20260824-2000"></script>
   </body>
 </html>
