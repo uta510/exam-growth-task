@@ -110,11 +110,12 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
     grid-area: animal;
     overflow: hidden;
     width: 100%;
-    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
-    grid-template-rows: auto;
-    align-items: center;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: start;
     justify-items: center;
     align-self: start;
+    padding-top: 8px;
   }
   .animal-scene, .animal-art {
     width: 100%;
@@ -122,7 +123,7 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   }
   .animal-scene {
     height: auto;
-    max-width: 280px;
+    max-width: 300px;
     max-height: none;
   }
   .animal-art {
@@ -132,7 +133,8 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
     aspect-ratio: auto;
   }
   .animal-art { padding: 12px; }
-  .animal-copy { align-self: center; justify-self: stretch; overflow: hidden; padding: 12px 16px 12px 4px; }
+  .animal-copy { align-self: start; justify-self: center; width: min(100%, 620px); overflow: hidden; padding: 8px 18px 14px; }
+  .animal-copy > * { max-width: 100%; }
   .animal-intro { font-size: 0.8rem; line-height: 1.45; }
   .task-panel { grid-area: task; min-width: 0; }
   .table-wrap { overflow-x: auto; }
