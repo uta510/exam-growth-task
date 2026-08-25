@@ -938,6 +938,7 @@ function toggleGlobalTodayTask(term, exam, subject, taskId, options = {}) {
 }
 function getGlobalTodayTasks() {
   const key = globalTodayKey();
+  const today = todayString();
   const rawItems = Array.isArray(state[key]) ? state[key] : [];
   const seen = new Set();
   const items = rawItems.reduce((result, item) => {
@@ -945,6 +946,8 @@ function getGlobalTodayTasks() {
     if (!ref || seen.has(ref.uid)) return result;
     seen.add(ref.uid);
     const inferredSource = item.source === "note" || (isTaskComplete(ref.task) && (ref.task.note || "").trim() && !ref.task.noteDone) ? "note" : "";
+    const completedDate = inferredSource === "note" ? ref.task.noteDoneDate || "" : ref.task.date || "";
+    if (completedDate && completedDate < today && isGlobalTodayItemComplete({ ...item, source: inferredSource }, ref.task)) return result;
     result.push({ term: ref.term, exam: ref.exam, subject: ref.subject, taskId: ref.task.id, source: inferredSource });
     return result;
   }, []);
@@ -1389,7 +1392,7 @@ function renderTasks() {
     const noteDoneClass = task.noteDone ? " is-note-done" : "";
     const inToday = isGlobalTodayTaskSelected(selectedTerm, selectedExam, selectedSubject, task.id);
     const todayLabel = inToday ? "已加" : complete ? "完成" : "加入";
-    return '<tr class="' + (complete ? 'is-done' : '') + '"><td class="done-col"><input type="checkbox" ' + (task.done ? 'checked' : '') + ' data-index="' + index + '" aria-label="完成 ' + escapeHtml(task.title) + '"></td><td><span class="task-number">' + taskNumber + '.</span>' + escapeHtml(task.title) + '</td><td class="date-col"><input class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" value="' + escapeHtml(formatTaskDate(task.date)) + '" data-date-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 完成日期"></td><td class="note-col"><input class="note-input' + noteDoneClass + '" type="text" value="' + escapeHtml(task.note || '') + '" data-note-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 備註" placeholder="備註"></td><td class="today-col"><button class="add-global-today" type="button" data-add-global-index="' + index + '" ' + (complete && !inToday ? 'disabled' : '') + '>' + todayLabel + '</button></td></tr>';
+    return '<tr class="' + (complete ? 'is-done' : '') + '"><td class="done-col"><input type="checkbox" ' + (task.done ? 'checked' : '') + ' data-index="' + index + '" aria-label="完成 ' + escapeHtml(task.title) + '"></td><td><span class="task-title-wrap"><span class="task-number">' + taskNumber + '.</span><span class="task-title-text">' + escapeHtml(task.title) + '</span></span></td><td class="date-col"><input class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" value="' + escapeHtml(formatTaskDate(task.date)) + '" data-date-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 完成日期"></td><td class="note-col"><input class="note-input' + noteDoneClass + '" type="text" value="' + escapeHtml(task.note || '') + '" data-note-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 備註" placeholder="備註"></td><td class="today-col"><button class="add-global-today" type="button" data-add-global-index="' + index + '" ' + (complete && !inToday ? 'disabled' : '') + '>' + todayLabel + '</button></td></tr>';
   }).join("");
   const pager = document.querySelector("#taskPager");
   pager.innerHTML = Array.from({ length: totalPages }, (_, i) => {
