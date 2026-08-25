@@ -58,7 +58,7 @@ h2 { font-size: 1.08rem; }
 .habitat-bamboo::before, .habitat-tree::before, .habitat-vine::before { background: rgba(102, 169, 122, 0.32); width: 62px; height: 230px; left: 42px; bottom: 20px; }
 .habitat-snow::before, .habitat-ice::before { background: rgba(218, 235, 248, 0.8); width: 230px; }
 .habitat-savanna::before, .habitat-grass::before { background: rgba(238, 199, 102, 0.28); }
-.animal-art { position: relative; display: grid; place-items: center; width: 280px; height: 280px; max-width: 100%; min-width: 0; min-height: 0; padding: 8px; overflow: hidden; }
+.animal-art { position: relative; display: grid; place-items: center; width: 100%; height: 100%; max-width: 100%; min-width: 0; min-height: 0; padding: 8px; overflow: hidden; }
 .animal-svg { width: 100%; height: 100%; max-width: 100%; max-height: 100%; filter: drop-shadow(0 12px 16px rgba(76, 87, 110, 0.14)); }
 .generated-animal { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center center; border-radius: 0; display: block; filter: drop-shadow(0 12px 16px rgba(76, 87, 110, 0.14)); }
 .animal-copy { width: 100%; max-width: 100%; min-width: 0; padding: 10px 12px 12px; min-height: 0; overflow: hidden; display: grid; justify-items: center; text-align: left; overflow-wrap: anywhere; word-break: break-word; }
@@ -117,10 +117,18 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   }
   .animal-scene, .animal-art {
     width: 100%;
-    height: auto;
     aspect-ratio: 1;
+  }
+  .animal-scene {
+    height: auto;
     max-width: 230px;
-    max-height: 230px;
+    max-height: none;
+  }
+  .animal-art {
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
   }
   .animal-art { padding: 12px; }
   .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 8px 12px 12px; }
@@ -137,7 +145,8 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   .exam-menu { grid-template-columns: repeat(2, minmax(132px, 1fr)); }
   .control-panel { padding: 10px; }
   .animal-panel { width: 100%; overflow: hidden; grid-template-columns: minmax(150px, 34%) minmax(0, 1fr); grid-template-rows: auto; align-items: start; justify-items: center; }
-  .animal-scene, .animal-art { width: 100%; height: auto; aspect-ratio: 1; }
+  .animal-scene { width: 100%; height: auto; aspect-ratio: 1; }
+  .animal-art { width: 100%; height: 100%; aspect-ratio: auto; }
   .generated-animal { width: 100%; height: 100%; }
   .animal-scene { max-height: none; }
   .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 12px 14px; }
@@ -145,7 +154,8 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
 }
 @media (min-width: 561px) and (max-width: 920px) {
   .animal-panel { grid-template-columns: minmax(190px, 30%) minmax(0, 1fr); }
-  .animal-scene, .animal-art { max-width: 240px; }
+  .animal-scene { max-width: 240px; }
+  .animal-art { max-width: none; }
   .animal-intro { font-size: 0.86rem; line-height: 1.5; }
 }
 @media (max-width: 560px) {
