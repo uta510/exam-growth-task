@@ -49,7 +49,7 @@ h2 { font-size: 1.08rem; }
 .control-panel, .animal-panel, .task-panel { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); box-shadow: 0 14px 34px rgba(76, 87, 110, 0.09); overflow: hidden; min-height: 0; }
 .control-panel { align-self: stretch; padding: 12px; display: grid; align-content: stretch; }
 .animal-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); align-self: start; justify-items: center; width: 280px; max-width: 100%; height: auto; min-width: 0; }
-.animal-scene { position: relative; display: grid; place-items: center; justify-self: center; width: 280px; height: 280px; background: transparent; overflow: hidden; }
+.animal-scene { position: relative; display: grid; place-items: center; justify-self: center; width: 280px; height: 280px; max-width: 100%; background: transparent; overflow: hidden; }
 .habitat { display: none; }
 .habitat::before, .habitat::after { content: ""; position: absolute; border-radius: 999px; }
 .habitat::before { width: 180px; height: 58px; left: 34px; bottom: 38px; background: rgba(169, 216, 194, 0.45); }
@@ -58,12 +58,13 @@ h2 { font-size: 1.08rem; }
 .habitat-bamboo::before, .habitat-tree::before, .habitat-vine::before { background: rgba(102, 169, 122, 0.32); width: 62px; height: 230px; left: 42px; bottom: 20px; }
 .habitat-snow::before, .habitat-ice::before { background: rgba(218, 235, 248, 0.8); width: 230px; }
 .habitat-savanna::before, .habitat-grass::before { background: rgba(238, 199, 102, 0.28); }
-.animal-art { position: relative; display: grid; place-items: center; width: 280px; height: 280px; max-width: 100%; min-height: 0; overflow: hidden; }
-.animal-svg { width: 100%; height: 100%; filter: drop-shadow(0 12px 16px rgba(76, 87, 110, 0.14)); }
-.generated-animal { width: 100%; height: 100%; max-width: 100%; object-fit: contain; object-position: center center; border-radius: 0; display: block; filter: drop-shadow(0 12px 16px rgba(76, 87, 110, 0.14)); }
-.animal-copy { width: 100%; padding: 10px 12px 12px; min-height: 0; overflow: hidden; display: grid; justify-items: center; text-align: left; }
-.animal-copy > * { width: min(100%, 360px); }
-.animal-intro { margin: 8px 0 0; font-size: 0.82rem; line-height: 1.45; color: var(--ink); }
+.animal-art { position: relative; display: grid; place-items: center; width: 280px; height: 280px; max-width: 100%; min-width: 0; min-height: 0; padding: 8px; overflow: hidden; }
+.animal-svg { width: 100%; height: 100%; max-width: 100%; max-height: 100%; filter: drop-shadow(0 12px 16px rgba(76, 87, 110, 0.14)); }
+.generated-animal { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center center; border-radius: 0; display: block; filter: drop-shadow(0 12px 16px rgba(76, 87, 110, 0.14)); }
+.animal-copy { width: 100%; max-width: 100%; min-width: 0; padding: 10px 12px 12px; min-height: 0; overflow: hidden; display: grid; justify-items: center; text-align: left; overflow-wrap: anywhere; word-break: break-word; }
+.animal-copy > * { width: 100%; max-width: 360px; min-width: 0; }
+.animal-copy h2 { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+.animal-intro { margin: 8px 0 0; font-size: 0.82rem; line-height: 1.45; color: var(--ink); max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
 .progress-wrap { margin-top: 10px; }
 .progress-top { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; color: var(--muted); font-size: 0.82rem; font-weight: 800; }
 .progress-track { height: 12px; border-radius: 999px; background: rgba(41, 50, 65, 0.1); overflow: hidden; }
@@ -107,9 +108,9 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   .growth-row strong { white-space: nowrap; }
   .animal-panel {
     grid-area: animal;
-    overflow: visible;
+    overflow: hidden;
     width: 100%;
-    grid-template-columns: minmax(180px, 230px) minmax(0, 1fr);
+    grid-template-columns: minmax(160px, 210px) minmax(0, 1fr);
     grid-template-rows: auto;
     align-items: start;
     justify-items: center;
@@ -119,9 +120,10 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
     width: 100%;
     height: auto;
     aspect-ratio: 1;
-    max-height: 230px;
+    max-height: 210px;
   }
-  .animal-copy { align-self: start; justify-self: center; overflow: visible; padding: 12px 14px; }
+  .animal-art { padding: 10px; }
+  .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 12px 14px; }
   .animal-intro { font-size: 0.78rem; line-height: 1.38; }
   .task-panel { grid-area: task; min-width: 0; }
   .table-wrap { overflow-x: auto; }
@@ -134,16 +136,16 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   .control-band, .dashboard { grid-template-columns: 1fr; }
   .exam-menu { grid-template-columns: repeat(2, minmax(132px, 1fr)); }
   .control-panel { padding: 10px; }
-  .animal-panel { width: 100%; overflow: visible; grid-template-columns: minmax(180px, 38%) minmax(0, 1fr); grid-template-rows: auto; align-items: start; justify-items: center; }
+  .animal-panel { width: 100%; overflow: hidden; grid-template-columns: minmax(150px, 34%) minmax(0, 1fr); grid-template-rows: auto; align-items: start; justify-items: center; }
   .animal-scene, .animal-art { width: 100%; height: auto; aspect-ratio: 1; }
   .generated-animal { width: 100%; height: 100%; }
   .animal-scene { max-height: none; }
-  .animal-copy { align-self: start; justify-self: center; overflow: visible; padding: 12px 14px; }
+  .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 12px 14px; }
   .overview-grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
 }
 @media (min-width: 561px) and (max-width: 920px) {
-  .animal-panel { grid-template-columns: minmax(220px, 32%) minmax(0, 1fr); }
-  .animal-scene, .animal-art { max-width: 280px; }
+  .animal-panel { grid-template-columns: minmax(190px, 30%) minmax(0, 1fr); }
+  .animal-scene, .animal-art { max-width: 240px; }
   .animal-intro { font-size: 0.86rem; line-height: 1.5; }
 }
 @media (max-width: 560px) {
