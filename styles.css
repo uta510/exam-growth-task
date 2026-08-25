@@ -96,22 +96,21 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   html, body { overflow: auto; }
   .app-shell { height: auto; min-height: 100dvh; }
   .dashboard {
-    grid-template-columns: minmax(420px, 460px) minmax(0, 1fr);
+    grid-template-columns: minmax(320px, 360px) minmax(220px, 240px) minmax(0, 1fr);
     grid-template-areas:
-      "control animal"
-      "control task";
+      "control animal task";
     align-items: start;
   }
   .control-panel { grid-area: control; min-height: calc(100dvh - 132px); }
-  .side-tools { grid-template-columns: 150px minmax(0, 1fr); }
+  .side-tools { grid-template-columns: 132px minmax(0, 1fr); }
   .growth-row { grid-template-columns: 42px minmax(88px, 1fr); }
   .growth-row strong { white-space: nowrap; }
   .animal-panel {
     grid-area: animal;
     overflow: hidden;
     width: 100%;
-    grid-template-columns: minmax(160px, 210px) minmax(0, 1fr);
-    grid-template-rows: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
     align-items: start;
     justify-items: center;
     align-self: start;
@@ -120,14 +119,15 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
     width: 100%;
     height: auto;
     aspect-ratio: 1;
-    max-height: 210px;
+    max-width: 230px;
+    max-height: 230px;
   }
-  .animal-art { padding: 10px; }
-  .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 12px 14px; }
-  .animal-intro { font-size: 0.78rem; line-height: 1.38; }
+  .animal-art { padding: 12px; }
+  .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 8px 12px 12px; }
+  .animal-intro { font-size: 0.76rem; line-height: 1.36; }
   .task-panel { grid-area: task; min-width: 0; }
   .table-wrap { overflow-x: auto; }
-  table { min-width: 640px; }
+  table { min-width: 560px; }
 }
 @media (max-width: 920px) {
   html, body { overflow: auto; }
