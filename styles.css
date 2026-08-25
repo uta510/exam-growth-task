@@ -96,9 +96,10 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   html, body { overflow: auto; }
   .app-shell { height: auto; min-height: 100dvh; }
   .dashboard {
-    grid-template-columns: minmax(320px, 360px) minmax(220px, 240px) minmax(0, 1fr);
+    grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
     grid-template-areas:
-      "control animal task";
+      "control animal"
+      "control task";
     align-items: start;
   }
   .control-panel { grid-area: control; min-height: calc(100dvh - 132px); }
@@ -109,9 +110,9 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
     grid-area: animal;
     overflow: hidden;
     width: 100%;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    align-items: start;
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
     justify-items: center;
     align-self: start;
   }
@@ -121,7 +122,7 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
   }
   .animal-scene {
     height: auto;
-    max-width: 230px;
+    max-width: 280px;
     max-height: none;
   }
   .animal-art {
@@ -131,8 +132,8 @@ tr.is-done td { background: rgba(169, 216, 194, 0.16); }
     aspect-ratio: auto;
   }
   .animal-art { padding: 12px; }
-  .animal-copy { align-self: start; justify-self: stretch; overflow: hidden; padding: 8px 12px 12px; }
-  .animal-intro { font-size: 0.76rem; line-height: 1.36; }
+  .animal-copy { align-self: center; justify-self: stretch; overflow: hidden; padding: 12px 16px 12px 4px; }
+  .animal-intro { font-size: 0.8rem; line-height: 1.45; }
   .task-panel { grid-area: task; min-width: 0; }
   .table-wrap { overflow-x: auto; }
   table { min-width: 560px; }
