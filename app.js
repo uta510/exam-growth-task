@@ -889,28 +889,35 @@ function updateCurrentTask(index, changes) {
 function findGlobalTodayTask(item) {
   if (!item || !item.term || !item.exam || !item.subject || !item.taskId) return null;
   const subject = normalizeSubjectForTerm(item.subject, item.term, item.exam);
+  const source = item.source === "note" ? "note" : "";
   const tasks = getTasks(subject, item.exam, item.term);
   const index = tasks.findIndex((task) => task.id === item.taskId);
   if (index < 0) return null;
+  const noteText = (tasks[index].note || "").trim();
   return {
     term: item.term,
     exam: item.exam,
     subject,
+    source,
     task: tasks[index],
+    displayTitle: source === "note" && noteText ? noteText : tasks[index].title,
     index,
-    uid: item.term + "||" + item.exam + "||" + subject + "||" + tasks[index].id
+    uid: item.term + "||" + item.exam + "||" + subject + "||" + tasks[index].id + "||" + source
   };
 }
-function isGlobalTodayTaskSelected(term, exam, subject, taskId) {
-  return getGlobalTodayTasks().some((item) => item.term === term && item.exam === exam && item.subject === subject && item.taskId === taskId);
+function isGlobalTodayTaskSelected(term, exam, subject, taskId, source = "") {
+  const normalizedSubject = normalizeSubjectForTerm(subject, term, exam);
+  const normalizedSource = source === "note" ? "note" : "";
+  return getGlobalTodayTasks().some((item) => item.term === term && item.exam === exam && item.subject === normalizedSubject && item.taskId === taskId && (item.source || "") === normalizedSource);
 }
 function addGlobalTodayTask(term, exam, subject, taskId, options = {}) {
   const normalizedSubject = normalizeSubjectForTerm(subject, term, exam);
+  const source = options.source === "note" ? "note" : "";
   const tasks = getTasks(normalizedSubject, exam, term);
   const task = tasks.find((item) => item.id === taskId);
-  if (!task || (!options.allowCompletedTask && isTaskComplete(task)) || isGlobalTodayTaskSelected(term, exam, normalizedSubject, taskId)) return false;
+  if (!task || (!options.allowCompletedTask && isTaskComplete(task)) || isGlobalTodayTaskSelected(term, exam, normalizedSubject, taskId, source)) return false;
   const key = globalTodayKey();
-  state[key] = [...getGlobalTodayTasks(), { term, exam, subject: normalizedSubject, taskId, source: options.source === "note" ? "note" : "" }];
+  state[key] = [...getGlobalTodayTasks(), { term, exam, subject: normalizedSubject, taskId, source, completedOn: "" }];
   saveState();
   return true;
 }
@@ -922,16 +929,18 @@ function removeGlobalTodayTaskByUid(uid) {
   });
   saveState();
 }
-function removeGlobalTodayTask(term, exam, subject, taskId) {
+function removeGlobalTodayTask(term, exam, subject, taskId, source = "") {
   const normalizedSubject = normalizeSubjectForTerm(subject, term, exam);
+  const normalizedSource = source === "note" ? "note" : "";
   const key = globalTodayKey();
-  state[key] = getGlobalTodayTasks().filter((item) => !(item.term === term && item.exam === exam && item.subject === normalizedSubject && item.taskId === taskId));
+  state[key] = getGlobalTodayTasks().filter((item) => !(item.term === term && item.exam === exam && item.subject === normalizedSubject && item.taskId === taskId && (item.source || "") === normalizedSource));
   saveState();
 }
 function toggleGlobalTodayTask(term, exam, subject, taskId, options = {}) {
   const normalizedSubject = normalizeSubjectForTerm(subject, term, exam);
-  if (isGlobalTodayTaskSelected(term, exam, normalizedSubject, taskId)) {
-    removeGlobalTodayTask(term, exam, normalizedSubject, taskId);
+  const source = options.source === "note" ? "note" : "";
+  if (isGlobalTodayTaskSelected(term, exam, normalizedSubject, taskId, source)) {
+    removeGlobalTodayTask(term, exam, normalizedSubject, taskId, source);
     return false;
   }
   return addGlobalTodayTask(term, exam, normalizedSubject, taskId, options);
@@ -943,12 +952,15 @@ function getGlobalTodayTasks() {
   const seen = new Set();
   const items = rawItems.reduce((result, item) => {
     const ref = findGlobalTodayTask(item);
-    if (!ref || seen.has(ref.uid)) return result;
-    seen.add(ref.uid);
-    const inferredSource = item.source === "note" || (isTaskComplete(ref.task) && (ref.task.note || "").trim() && !ref.task.noteDone) ? "note" : "";
-    const completedDate = inferredSource === "note" ? ref.task.noteDoneDate || "" : ref.task.date || "";
-    if (completedDate && completedDate < today && isGlobalTodayItemComplete({ ...item, source: inferredSource }, ref.task)) return result;
-    result.push({ term: ref.term, exam: ref.exam, subject: ref.subject, taskId: ref.task.id, source: inferredSource });
+    if (!ref) return result;
+    const source = item.source === "note" ? "note" : "";
+    const uid = ref.term + "||" + ref.exam + "||" + ref.subject + "||" + ref.task.id + "||" + source;
+    if (seen.has(uid)) return result;
+    seen.add(uid);
+    const complete = isGlobalTodayItemComplete({ ...item, source }, ref.task);
+    const completedOn = complete ? item.completedOn || today : "";
+    if (complete && completedOn < today) return result;
+    result.push({ term: ref.term, exam: ref.exam, subject: ref.subject, taskId: ref.task.id, source, completedOn });
     return result;
   }, []);
   if (items.length !== rawItems.length || items.some((item, index) => JSON.stringify(item) !== JSON.stringify(rawItems[index]))) {
@@ -961,6 +973,32 @@ function isGlobalTodayItemComplete(item, task) {
   if (item && item.source === "note") return Boolean(task.noteDone);
   return isTaskComplete(task);
 }
+function openGlobalTodayTask(uid) {
+  const item = getGlobalTodayTasks().find((todayItem) => {
+    const ref = findGlobalTodayTask(todayItem);
+    return ref && ref.uid === uid;
+  });
+  const ref = findGlobalTodayTask(item);
+  if (!ref) return;
+  selectedTerm = ref.term;
+  selectedExam = ref.exam;
+  selectedSubject = normalizeSubjectForTerm(ref.subject, ref.term, ref.exam);
+  if (ref.source === "note") {
+    render();
+    openTrackerDialog(ref.uid);
+    return;
+  }
+  pageByPlan[planKey(ref.subject, ref.exam, ref.term)] = Math.floor(ref.index / tasksPerPage) + 1;
+  render();
+  window.setTimeout(() => {
+    const rows = Array.from(document.querySelectorAll("#taskRows tr[data-task-id]"));
+    const target = rows.find((row) => row.dataset.taskId === ref.task.id);
+    if (!target) return;
+    target.classList.add("is-jump-target");
+    target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    window.setTimeout(() => target.classList.remove("is-jump-target"), 1800);
+  }, 0);
+}
 function renderGlobalTodayTasks() {
   const list = document.querySelector("#globalTodayList");
   if (!list) return;
@@ -972,9 +1010,13 @@ function renderGlobalTodayTasks() {
       const ref = findGlobalTodayTask(item);
       if (!ref) return "";
       const complete = isGlobalTodayItemComplete(item, ref.task);
-      return '<li class="' + (complete ? 'is-complete' : '') + '"><div class="global-today-meta"><em>' + escapeHtml(ref.subject) + '</em><span>' + escapeHtml(termShortLabel(ref.term) + " " + ref.exam) + '</span></div><p class="global-today-title">' + escapeHtml(ref.task.title) + '</p></li>';
+      const sourceLabel = ref.source === "note" ? '<em>備註</em>' : "";
+      return '<li class="' + (complete ? 'is-complete' : '') + '"><button class="global-today-jump" type="button" data-open-global-today="' + escapeHtml(ref.uid) + '" aria-label="前往 ' + escapeHtml(ref.displayTitle) + '"><span class="global-today-meta"><em>' + escapeHtml(ref.subject) + '</em>' + sourceLabel + '<span>' + escapeHtml(termShortLabel(ref.term) + " " + ref.exam) + '</span></span><span class="global-today-title">' + escapeHtml(ref.displayTitle) + '</span></button></li>';
     }).join("")
     : '<li class="empty-note">目前沒有今日任務</li>';
+  list.querySelectorAll("[data-open-global-today]").forEach((button) => button.addEventListener("click", () => {
+    openGlobalTodayTask(button.dataset.openGlobalToday);
+  }));
 }
 function renderGlobalTodayEditor() {
   const list = document.querySelector("#globalTodayEditorList");
@@ -985,7 +1027,8 @@ function renderGlobalTodayEditor() {
       const ref = findGlobalTodayTask(item);
       if (!ref) return "";
       const complete = isGlobalTodayItemComplete(item, ref.task);
-      return '<li class="' + (complete ? 'is-complete' : '') + '" data-global-today-row="' + index + '"><button class="drag-handle" type="button" draggable="true" data-global-today-drag="' + index + '" aria-label="拖曳第 ' + (index + 1) + ' 個今日任務排序" title="拖曳排序">≡</button><div class="global-today-editor-text"><div class="global-today-meta"><em>' + escapeHtml(ref.subject) + '</em><span>' + escapeHtml(termShortLabel(ref.term) + " " + ref.exam) + '</span></div><strong>' + escapeHtml(ref.task.title) + '</strong></div><button class="delete-task-button" type="button" data-delete-global-today="' + escapeHtml(ref.uid) + '" aria-label="刪除今日任務">×</button></li>';
+      const sourceLabel = ref.source === "note" ? '<em>備註</em>' : "";
+      return '<li class="' + (complete ? 'is-complete' : '') + '" data-global-today-row="' + index + '"><button class="drag-handle" type="button" draggable="true" data-global-today-drag="' + index + '" aria-label="拖曳第 ' + (index + 1) + ' 個今日任務排序" title="拖曳排序">≡</button><div class="global-today-editor-text"><div class="global-today-meta"><em>' + escapeHtml(ref.subject) + '</em>' + sourceLabel + '<span>' + escapeHtml(termShortLabel(ref.term) + " " + ref.exam) + '</span></div><strong>' + escapeHtml(ref.displayTitle) + '</strong></div><button class="delete-task-button" type="button" data-delete-global-today="' + escapeHtml(ref.uid) + '" aria-label="刪除今日任務">×</button></li>';
     }).join("")
     : '<li class="empty-note">目前沒有今日任務</li>';
   list.querySelectorAll("[data-delete-global-today]").forEach((button) => button.addEventListener("click", () => {
@@ -1133,19 +1176,32 @@ function learningStatusEntries() {
   allExamItems().forEach((item) => {
     subjectsForExport(item.term, item.exam).forEach((subject) => {
       getTasks(subject, item.exam, item.term).forEach((task, index) => {
-        if (!isTaskComplete(task)) return;
-        entries.push({
-          date: task.date,
-          term: item.term,
-          exam: item.exam,
-          subject,
-          number: index + 1,
-          title: task.title,
-        });
+        if (isTaskComplete(task)) {
+          entries.push({
+            date: task.date,
+            term: item.term,
+            exam: item.exam,
+            subject,
+            number: index + 1,
+            title: task.title,
+            source: ""
+          });
+        }
+        if (task.noteDone && isFullTaskDate(task.noteDoneDate) && (task.note || "").trim()) {
+          entries.push({
+            date: task.noteDoneDate,
+            term: item.term,
+            exam: item.exam,
+            subject,
+            number: index + 1,
+            title: (task.note || "").trim(),
+            source: "note"
+          });
+        }
       });
     });
   });
-  return entries.sort((a, b) => a.date.localeCompare(b.date) || a.subject.localeCompare(b.subject) || a.number - b.number);
+  return entries.sort((a, b) => a.date.localeCompare(b.date) || a.subject.localeCompare(b.subject) || a.number - b.number || a.source.localeCompare(b.source));
 }
 
 function entriesByDate(entries) {
@@ -1159,7 +1215,7 @@ function entriesByDate(entries) {
 function statusTaskList(entries) {
   if (!entries.length) return '<p class="status-empty">這一天還沒有完成任務</p>';
   return '<ul class="status-task-list">' + entries.map((entry) => (
-    '<li><em>' + escapeHtml(entry.subject) + '</em><div class="status-task-main"><strong>' + escapeHtml(entry.title) + '</strong><small>' + escapeHtml(termShortLabel(entry.term) + " " + entry.exam + "｜任務 " + entry.number) + '</small></div></li>'
+    '<li><div class="status-labels"><em>' + escapeHtml(entry.subject) + '</em>' + (entry.source === "note" ? '<span class="status-note-pill">備註</span>' : '') + '</div><div class="status-task-main"><strong>' + escapeHtml(entry.title) + '</strong><small>' + escapeHtml(termShortLabel(entry.term) + " " + entry.exam + "｜任務 " + entry.number) + '</small></div></li>'
   )).join("") + '</ul>';
 }
 
@@ -1188,7 +1244,7 @@ function renderLearningStatus() {
     body.innerHTML = '<div class="status-summary"><h3>本週完成</h3><span>完成 ' + weekEntries.length + ' 個任務</span></div><div class="status-week-grid">' + days.map((date, index) => {
       const key = dateToString(date);
       const dayEntries = grouped[key] || [];
-      return '<section class="status-day-column"><div class="status-day-head"><button type="button" data-status-date="' + key + '">' + ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][index] + ' ' + (date.getMonth() + 1) + '/' + date.getDate() + '</button><small>' + dayEntries.length + ' 個任務</small></div><ul class="status-day-items">' + (dayEntries.length ? dayEntries.map((entry) => '<li><em>' + escapeHtml(entry.subject) + '</em>' + escapeHtml(entry.title) + '</li>').join("") : '<li class="status-empty-day">沒有完成任務</li>') + '</ul></section>';
+      return '<section class="status-day-column"><div class="status-day-head"><button type="button" data-status-date="' + key + '">' + ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][index] + ' ' + (date.getMonth() + 1) + '/' + date.getDate() + '</button><small>' + dayEntries.length + ' 個任務</small></div><ul class="status-day-items">' + (dayEntries.length ? dayEntries.map((entry) => '<li><span class="status-day-labels"><em>' + escapeHtml(entry.subject) + '</em>' + (entry.source === "note" ? '<span class="status-note-pill">備註</span>' : '') + '</span><span class="status-day-title">' + escapeHtml(entry.title) + '</span></li>').join("") : '<li class="status-empty-day">沒有完成任務</li>') + '</ul></section>';
     }).join("") + '</div>';
   } else {
     const first = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
@@ -1204,7 +1260,7 @@ function renderLearningStatus() {
       const dayEntries = grouped[key] || [];
       const muted = date.getMonth() !== baseDate.getMonth();
       const isToday = key === todayString();
-      return '<section class="status-calendar-cell' + (muted ? ' is-muted' : '') + (isToday ? ' is-today' : '') + '"><div class="status-calendar-date"><button type="button" data-status-date="' + key + '">' + date.getDate() + '</button>' + (dayEntries.length ? '<span>' + dayEntries.length + '項</span>' : '') + '</div><div class="status-calendar-items">' + dayEntries.slice(0, 3).map((entry) => '<p>' + escapeHtml(entry.subject + "｜" + entry.title) + '</p>').join("") + (dayEntries.length > 3 ? '<p>還有 ' + (dayEntries.length - 3) + ' 項</p>' : '') + '</div></section>';
+      return '<section class="status-calendar-cell' + (muted ? ' is-muted' : '') + (isToday ? ' is-today' : '') + '"><div class="status-calendar-date"><button type="button" data-status-date="' + key + '">' + date.getDate() + '</button>' + (dayEntries.length ? '<span>' + dayEntries.length + '項</span>' : '') + '</div><div class="status-calendar-items">' + dayEntries.slice(0, 3).map((entry) => '<p>' + escapeHtml(entry.subject + (entry.source === "note" ? "｜備註｜" : "｜") + entry.title) + '</p>').join("") + (dayEntries.length > 3 ? '<p>還有 ' + (dayEntries.length - 3) + ' 項</p>' : '') + '</div></section>';
     }).join("") + '</div>';
   }
 
@@ -1341,7 +1397,7 @@ function renderNoteTracker() {
         order: task.noteOrder || 0,
         done: Boolean(task.noteDone),
         date: task.noteDoneDate || "",
-        inToday: isGlobalTodayTaskSelected(selectedTerm, selectedExam, subject, task.id)
+        inToday: isGlobalTodayTaskSelected(selectedTerm, selectedExam, subject, task.id, "note")
       }))
       .filter((item) => item.note);
   }).sort((a, b) => (a.order || 999999) - (b.order || 999999));
@@ -1349,10 +1405,11 @@ function renderNoteTracker() {
   list.innerHTML = notes.length
     ? notes.map((item) => {
       const todayLabel = item.done ? "完成" : item.inToday ? "已加" : "加入";
+      const noteUid = selectedTerm + "||" + selectedExam + "||" + item.subject + "||" + item.taskId + "||note";
       const action = item.done
         ? '<button class="tracker-add-today is-note-complete" type="button" disabled>' + todayLabel + '</button>'
         : '<button class="tracker-add-today" type="button" data-add-tracker-key="' + escapeHtml(item.key) + '" data-add-tracker-index="' + item.index + '" data-add-tracker-subject="' + escapeHtml(item.subject) + '">' + todayLabel + '</button>';
-      return '<li class="' + (item.done ? 'is-tracked' : '') + '"><label><input type="checkbox" ' + (item.done ? 'checked' : '') + ' data-track-key="' + escapeHtml(item.key) + '" data-track-index="' + item.index + '"><span><em>' + escapeHtml(item.subject) + '</em><strong>' + item.number + '.</strong> ' + escapeHtml(item.title) + '：' + escapeHtml(item.note) + '</span></label>' + action + '</li>';
+      return '<li class="' + (item.done ? 'is-tracked' : '') + '" data-note-today-uid="' + escapeHtml(noteUid) + '"><label><input type="checkbox" ' + (item.done ? 'checked' : '') + ' data-track-key="' + escapeHtml(item.key) + '" data-track-index="' + item.index + '"><span><em>' + escapeHtml(item.subject) + '</em><strong>' + item.number + '.</strong> ' + escapeHtml(item.title) + '：' + escapeHtml(item.note) + '</span></label>' + action + '</li>';
     }).join("")
     : '<li class="empty-note">目前沒有備註</li>';
   list.querySelectorAll("[data-track-index]").forEach((input) => input.addEventListener("change", () => {
@@ -1363,6 +1420,8 @@ function renderNoteTracker() {
     renderNoteTracker();
     renderTasks();
     renderGlobalTodayTasks();
+    const learningDialog = document.querySelector("#learningStatusDialog");
+    if (learningDialog && learningDialog.classList.contains("open")) renderLearningStatus();
   }));
   list.querySelectorAll("[data-add-tracker-index]").forEach((button) => button.addEventListener("click", () => {
     const task = state[button.dataset.addTrackerKey] && state[button.dataset.addTrackerKey][Number(button.dataset.addTrackerIndex)];
@@ -1391,8 +1450,8 @@ function renderTasks() {
     const taskNumber = index + 1;
     const noteDoneClass = task.noteDone ? " is-note-done" : "";
     const inToday = isGlobalTodayTaskSelected(selectedTerm, selectedExam, selectedSubject, task.id);
-    const todayLabel = inToday ? "已加" : complete ? "完成" : "加入";
-    return '<tr class="' + (complete ? 'is-done' : '') + '"><td class="done-col"><input type="checkbox" ' + (task.done ? 'checked' : '') + ' data-index="' + index + '" aria-label="完成 ' + escapeHtml(task.title) + '"></td><td><span class="task-title-wrap"><span class="task-number">' + taskNumber + '.</span><span class="task-title-text">' + escapeHtml(task.title) + '</span></span></td><td class="date-col"><input class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" value="' + escapeHtml(formatTaskDate(task.date)) + '" data-date-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 完成日期"></td><td class="note-col"><input class="note-input' + noteDoneClass + '" type="text" value="' + escapeHtml(task.note || '') + '" data-note-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 備註" placeholder="備註"></td><td class="today-col"><button class="add-global-today" type="button" data-add-global-index="' + index + '" ' + (complete && !inToday ? 'disabled' : '') + '>' + todayLabel + '</button></td></tr>';
+    const todayLabel = complete ? "完成" : inToday ? "已加" : "加入";
+    return '<tr class="' + (complete ? 'is-done' : '') + '" data-task-id="' + escapeHtml(task.id) + '"><td class="done-col"><input type="checkbox" ' + (task.done ? 'checked' : '') + ' data-index="' + index + '" aria-label="完成 ' + escapeHtml(task.title) + '"></td><td><span class="task-title-wrap"><span class="task-number">' + taskNumber + '.</span><span class="task-title-text">' + escapeHtml(task.title) + '</span></span></td><td class="date-col"><input class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" value="' + escapeHtml(formatTaskDate(task.date)) + '" data-date-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 完成日期"></td><td class="note-col"><input class="note-input' + noteDoneClass + '" type="text" value="' + escapeHtml(task.note || '') + '" data-note-index="' + index + '" aria-label="' + escapeHtml(task.title) + ' 備註" placeholder="備註"></td><td class="today-col"><button class="add-global-today" type="button" data-add-global-index="' + index + '" ' + (complete ? 'disabled' : '') + '>' + todayLabel + '</button></td></tr>';
   }).join("");
   const pager = document.querySelector("#taskPager");
   pager.innerHTML = Array.from({ length: totalPages }, (_, i) => {
@@ -1405,8 +1464,12 @@ function renderTasks() {
     input.addEventListener("input", () => {
       const value = formatTaskDate(input.value);
       input.value = value;
-      updateCurrentTask(input.dataset.dateIndex, { date: value });
+      const task = updateCurrentTask(input.dataset.dateIndex, { date: value });
       refreshProgressOnly();
+      if (task && isTaskComplete(task)) {
+        renderTasks();
+        renderGlobalTodayTasks();
+      }
     });
     input.addEventListener("change", () => {
       const value = formatTaskDate(input.value);
@@ -1952,11 +2015,19 @@ function importDataFromFile(file) {
   reader.readAsText(file, "utf-8");
 }
 
-function openTrackerDialog() {
+function openTrackerDialog(highlightUid = "") {
   const dialog = document.querySelector("#trackerDialog");
   dialog.classList.add("open");
   dialog.setAttribute("aria-hidden", "false");
   renderNoteTracker();
+  if (!highlightUid) return;
+  window.setTimeout(() => {
+    const item = Array.from(document.querySelectorAll("#noteTrackerList [data-note-today-uid]")).find((row) => row.dataset.noteTodayUid === highlightUid);
+    if (!item) return;
+    item.classList.add("is-jump-target");
+    item.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    window.setTimeout(() => item.classList.remove("is-jump-target"), 1800);
+  }, 0);
 }
 
 function closeTrackerDialog() {
