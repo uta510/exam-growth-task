@@ -2,9 +2,10 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://zcrfakiogxvmedaiwlyr.supabase.co wss://zcrfakiogxvmedaiwlyr.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
     <title>段考成長任務表</title>
-    <link rel="stylesheet" href="styles.css?v=20260927-1557" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="app-shell">
@@ -223,13 +224,11 @@
           <label>Email<input id="cloudEmail" type="email" autocomplete="email" placeholder="登入信箱"></label>
           <label>Password<input id="cloudPassword" type="password" autocomplete="current-password" placeholder="登入密碼"></label>
           <div class="cloud-actions">
-            <button id="cloudSignUp" class="text-button" type="button">建立帳號</button>
             <button id="cloudSignIn" class="text-button" type="button">登入</button>
             <button id="cloudSignOut" class="text-button" type="button">登出</button>
           </div>
           <div class="cloud-actions">
-            <button id="cloudUpload" class="text-button" type="button">上傳本機資料</button>
-            <button id="cloudDownload" class="text-button" type="button">下載雲端資料</button>
+            <button id="cloudSyncNow" class="text-button" type="button">立即同步</button>
             <button id="cloudBackup" class="text-button" type="button">建立雲端備份</button>
           </div>
           <p id="cloudDialogStatus" class="cloud-dialog-status" aria-live="polite"></p>
@@ -237,7 +236,8 @@
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=20260927-1557"></script>
+    <script src="vendor/supabase.min.js"></script>
+    <script src="sync-merge.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

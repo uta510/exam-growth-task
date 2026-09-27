@@ -430,3 +430,20 @@ td:nth-child(2) { word-break: keep-all; overflow-wrap: anywhere; }
   .global-today-list { max-height: 220px; }
   .exam-growth-box, .side-score-badge { width: 100%; }
 }
+
+/* iOS App：瀏海／動態島／Home 指示條安全區 */
+.app-shell {
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+.tracker-dialog {
+  padding-top: max(24px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+@media (max-width: 560px) {
+  .app-shell { padding-top: max(10px, env(safe-area-inset-top)); }
+  .tracker-dialog { padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+}
+html { -webkit-text-size-adjust: 100%; }

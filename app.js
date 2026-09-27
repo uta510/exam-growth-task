@@ -32,92 +32,92 @@ const syncMetaKey = "_syncMeta";
 const tasksPerPage = 10;
 let pageByPlan = {};
 const babyImages = {
-  "國文-第一次段考": ["assets/baby-shiba.png", "柴犬寶寶"],
-  "國文-第二次段考": ["assets/baby-quokka.png", "短尾矮袋鼠寶寶"],
-  "國文-第三次段考": ["assets/baby-owl.png", "貓頭鷹寶寶"],
-  "英文-第一次段考": ["assets/baby-british-shorthair.png", "英國短毛貓寶寶"],
-  "英文-第二次段考": ["assets/baby-wombat.png", "袋熊寶寶"],
-  "英文-第三次段考": ["assets/baby-meerkat.png", "狐獴寶寶"],
-  "數學-第一次段考": ["assets/baby-kangaroo.png", "袋鼠寶寶"],
-  "數學-第二次段考": ["assets/baby-hedgehog.png", "刺蝟寶寶"],
-  "數學-第三次段考": ["assets/baby-sea-otter.png", "水獺寶寶"],
-  "社會-第一次段考": ["assets/baby-seal.png", "海豹寶寶"],
-  "社會-第二次段考": ["assets/baby-sugar-glider.png", "蜜袋鼯寶寶"],
-  "社會-第三次段考": ["assets/baby-seal.png", "海豹寶寶"],
-  "生物-第一次段考": ["assets/baby-sloth.png", "樹懶寶寶"],
-  "生物-第二次段考": ["assets/baby-pygmy-marmoset.png", "侏儒狨猴寶寶"],
-  "生物-第三次段考": ["assets/baby-arctic-fox.png", "北極狐寶寶"]
+  "國文-第一次段考": ["assets/baby-shiba.jpeg", "柴犬寶寶"],
+  "國文-第二次段考": ["assets/baby-quokka.jpeg", "短尾矮袋鼠寶寶"],
+  "國文-第三次段考": ["assets/baby-owl.jpeg", "貓頭鷹寶寶"],
+  "英文-第一次段考": ["assets/baby-british-shorthair.jpeg", "英國短毛貓寶寶"],
+  "英文-第二次段考": ["assets/baby-wombat.jpeg", "袋熊寶寶"],
+  "英文-第三次段考": ["assets/baby-meerkat.jpeg", "狐獴寶寶"],
+  "數學-第一次段考": ["assets/baby-kangaroo.jpeg", "袋鼠寶寶"],
+  "數學-第二次段考": ["assets/baby-hedgehog.jpeg", "刺蝟寶寶"],
+  "數學-第三次段考": ["assets/baby-sea-otter.jpeg", "水獺寶寶"],
+  "社會-第一次段考": ["assets/baby-seal.jpeg", "海豹寶寶"],
+  "社會-第二次段考": ["assets/baby-sugar-glider.jpeg", "蜜袋鼯寶寶"],
+  "社會-第三次段考": ["assets/baby-seal.jpeg", "海豹寶寶"],
+  "生物-第一次段考": ["assets/baby-sloth.jpeg", "樹懶寶寶"],
+  "生物-第二次段考": ["assets/baby-pygmy-marmoset.jpeg", "侏儒狨猴寶寶"],
+  "生物-第三次段考": ["assets/baby-arctic-fox.jpeg", "北極狐寶寶"]
 };
 
 const adultImages = {
-  "國文-第一次段考": ["assets/adult-shiba.png", "柴犬"],
-  "國文-第二次段考": ["assets/adult-quokka.png", "短尾矮袋鼠"],
-  "國文-第三次段考": ["assets/adult-owl.png", "貓頭鷹"],
-  "英文-第一次段考": ["assets/adult-british-shorthair.png", "英國短毛貓"],
-  "英文-第二次段考": ["assets/adult-wombat.png", "袋熊"],
-  "英文-第三次段考": ["assets/adult-meerkat.png", "狐獴"],
-  "數學-第一次段考": ["assets/adult-kangaroo.png", "袋鼠"],
-  "數學-第二次段考": ["assets/adult-hedgehog.png", "刺蝟"],
-  "數學-第三次段考": ["assets/adult-sea-otter.png", "水獺"],
-  "社會-第一次段考": ["assets/adult-seal.png", "海豹"],
-  "社會-第二次段考": ["assets/adult-sugar-glider.png", "蜜袋鼯"],
-  "社會-第三次段考": ["assets/adult-seal.png", "海豹"],
-  "生物-第一次段考": ["assets/adult-sloth.png", "樹懶"],
-  "生物-第二次段考": ["assets/adult-pygmy-marmoset.png", "侏儒狨猴"],
-  "生物-第三次段考": ["assets/adult-arctic-fox.png", "北極狐"]
+  "國文-第一次段考": ["assets/adult-shiba.jpeg", "柴犬"],
+  "國文-第二次段考": ["assets/adult-quokka.jpeg", "短尾矮袋鼠"],
+  "國文-第三次段考": ["assets/adult-owl.jpeg", "貓頭鷹"],
+  "英文-第一次段考": ["assets/adult-british-shorthair.jpeg", "英國短毛貓"],
+  "英文-第二次段考": ["assets/adult-wombat.jpeg", "袋熊"],
+  "英文-第三次段考": ["assets/adult-meerkat.jpeg", "狐獴"],
+  "數學-第一次段考": ["assets/adult-kangaroo.jpeg", "袋鼠"],
+  "數學-第二次段考": ["assets/adult-hedgehog.jpeg", "刺蝟"],
+  "數學-第三次段考": ["assets/adult-sea-otter.jpeg", "水獺"],
+  "社會-第一次段考": ["assets/adult-seal.jpeg", "海豹"],
+  "社會-第二次段考": ["assets/adult-sugar-glider.jpeg", "蜜袋鼯"],
+  "社會-第三次段考": ["assets/adult-seal.jpeg", "海豹"],
+  "生物-第一次段考": ["assets/adult-sloth.jpeg", "樹懶"],
+  "生物-第二次段考": ["assets/adult-pygmy-marmoset.jpeg", "侏儒狨猴"],
+  "生物-第三次段考": ["assets/adult-arctic-fox.jpeg", "北極狐"]
 };
 
 const termBabyImages = {
-  "八年級上學期-國文-第一次段考": ["assets/baby-okapi.png", "霍加狓寶寶"],
-  "八年級上學期-英文-第一次段考": ["assets/baby-hawksbill-sea-turtle.png", "玳瑁海龜寶寶"],
-  "八年級上學期-數學-第一次段考": ["assets/baby-iberian-lynx.png", "伊比利亞猞猁寶寶"],
-  "八年級上學期-理化-第一次段考": ["assets/baby-blue-whale.png", "藍鯨寶寶"],
-  "八年級上學期-社會-第一次段考": ["assets/baby-ring-tailed-lemur.png", "尾狐猴寶寶"],
-  "八年級下學期-國文-第一次段考": ["assets/baby-pygmy-marmoset.png", "侏儒狨猴寶寶"],
-  "八年級下學期-英文-第一次段考": ["assets/baby-brown-throated-sloth.png", "棕喉樹懶寶寶"],
-  "八年級下學期-數學-第一次段考": ["assets/baby-capybara.png", "水豚寶寶"],
-  "八年級下學期-理化-第一次段考": ["assets/baby-armadillo.png", "犰狳寶寶"],
-  "八年級下學期-社會-第一次段考": ["assets/baby-toucan.png", "巨嘴鳥寶寶"],
-  "八年級上學期-國文-第二次段考": ["assets/baby-blue-footed-booby.png", "藍腳鰹鳥寶寶"],
-  "八年級上學期-英文-第二次段考": ["assets/baby-alpaca.png", "羊駝寶寶"],
-  "八年級上學期-數學-第二次段考": ["assets/baby-kiwi-bird.png", "奇異鳥寶寶"],
-  "八年級上學期-理化-第二次段考": ["assets/baby-andean-condor.png", "安地斯神鷹寶寶"],
-  "八年級上學期-社會-第二次段考": ["assets/baby-red-fox.png", "紅狐寶寶"],
-  "八年級下學期-國文-第二次段考": ["assets/baby-harpy-eagle.png", "角鵰寶寶"],
-  "八年級下學期-英文-第二次段考": ["assets/baby-lesser-anteater.png", "小食蟻獸寶寶"],
-  "八年級下學期-數學-第二次段考": ["assets/baby-south-american-coati.png", "南美浣熊寶寶"],
-  "八年級下學期-理化-第二次段考": ["assets/baby-jaguar.png", "美洲豹寶寶"],
-  "八年級下學期-社會-第二次段考": ["assets/baby-scarlet-macaw.png", "紅金剛鸚鵡寶寶"],
+  "八年級上學期-國文-第一次段考": ["assets/baby-okapi.jpeg", "霍加狓寶寶"],
+  "八年級上學期-英文-第一次段考": ["assets/baby-hawksbill-sea-turtle.jpeg", "玳瑁海龜寶寶"],
+  "八年級上學期-數學-第一次段考": ["assets/baby-iberian-lynx.jpeg", "伊比利亞猞猁寶寶"],
+  "八年級上學期-理化-第一次段考": ["assets/baby-blue-whale.jpeg", "藍鯨寶寶"],
+  "八年級上學期-社會-第一次段考": ["assets/baby-ring-tailed-lemur.jpeg", "尾狐猴寶寶"],
+  "八年級下學期-國文-第一次段考": ["assets/baby-pygmy-marmoset.jpeg", "侏儒狨猴寶寶"],
+  "八年級下學期-英文-第一次段考": ["assets/baby-brown-throated-sloth.jpeg", "棕喉樹懶寶寶"],
+  "八年級下學期-數學-第一次段考": ["assets/baby-capybara.jpeg", "水豚寶寶"],
+  "八年級下學期-理化-第一次段考": ["assets/baby-armadillo.jpeg", "犰狳寶寶"],
+  "八年級下學期-社會-第一次段考": ["assets/baby-toucan.jpeg", "巨嘴鳥寶寶"],
+  "八年級上學期-國文-第二次段考": ["assets/baby-blue-footed-booby.jpeg", "藍腳鰹鳥寶寶"],
+  "八年級上學期-英文-第二次段考": ["assets/baby-alpaca.jpeg", "羊駝寶寶"],
+  "八年級上學期-數學-第二次段考": ["assets/baby-kiwi-bird.jpeg", "奇異鳥寶寶"],
+  "八年級上學期-理化-第二次段考": ["assets/baby-andean-condor.jpeg", "安地斯神鷹寶寶"],
+  "八年級上學期-社會-第二次段考": ["assets/baby-red-fox.jpeg", "紅狐寶寶"],
+  "八年級下學期-國文-第二次段考": ["assets/baby-harpy-eagle.jpeg", "角鵰寶寶"],
+  "八年級下學期-英文-第二次段考": ["assets/baby-lesser-anteater.jpeg", "小食蟻獸寶寶"],
+  "八年級下學期-數學-第二次段考": ["assets/baby-south-american-coati.jpeg", "南美浣熊寶寶"],
+  "八年級下學期-理化-第二次段考": ["assets/baby-jaguar.jpeg", "美洲豹寶寶"],
+  "八年級下學期-社會-第二次段考": ["assets/baby-scarlet-macaw.jpeg", "紅金剛鸚鵡寶寶"],
   "八年級下學期-國文-第三次段考": ["assets/baby-caracal-habitat.jpg", "獰貓寶寶"],
   "八年級下學期-英文-第三次段考": ["assets/baby-serval-habitat.jpg", "藪貓寶寶"],
   "八年級下學期-數學-第三次段考": ["assets/baby-shoebill-habitat.jpg", "鯨頭鸛寶寶"],
   "八年級下學期-理化-第三次段考": ["assets/baby-bongo-antelope-habitat.jpg", "邦戈羚羊寶寶"],
   "八年級下學期-社會-第三次段考": ["assets/baby-secretary-bird-habitat.jpg", "秘書鳥寶寶"],
-  "八年級上學期-國文-第三次段考": ["assets/baby-golden-lion-tamarin.png", "金獅面狨寶寶"],
-  "八年級上學期-英文-第三次段考": ["assets/baby-fennec-fox.png", "耳廓狐寶寶"],
-  "八年級上學期-數學-第三次段考": ["assets/baby-komodo-dragon.png", "科摩多龍寶寶"],
-  "八年級上學期-理化-第三次段考": ["assets/baby-south-american-sea-lion.png", "南美海獅寶寶"],
-  "八年級上學期-社會-第三次段考": ["assets/baby-lion-tailed-macaque.png", "獅尾狒狒寶寶"],
-  "七年級上學期-國文-第一次段考": ["assets/baby-leopard-cat.png", "石虎寶寶"],
-  "七年級上學期-英文-第一次段考": ["assets/baby-pangolin.png", "穿山甲寶寶"],
-  "七年級上學期-數學-第一次段考": ["assets/baby-crab-eating-mongoose.png", "食蟹獴寶寶"],
-  "七年級上學期-生物-第一次段考": ["assets/baby-masked-palm-civet.png", "麝香貓寶寶"],
-  "七年級上學期-社會-第一次段考": ["assets/baby-yellow-throated-marten.png", "黃喉貂寶寶"],
-  "七年級上學期-國文-第二次段考": ["assets/baby-black-faced-spoonbill.png", "黑面琵鷺寶寶"],
-  "七年級上學期-英文-第二次段考": ["assets/baby-mountain-hawk-eagle.png", "熊鷹寶寶"],
-  "七年級上學期-數學-第二次段考": ["assets/baby-swinhoe-pheasant.png", "藍腹鷴寶寶"],
-  "七年級上學期-生物-第二次段考": ["assets/baby-mikado-pheasant.png", "帝雉寶寶"],
-  "七年級上學期-社會-第二次段考": ["assets/baby-malayan-night-heron.png", "黑冠麻鷺寶寶"],
-  "七年級上學期-國文-第三次段考": ["assets/baby-chinese-white-dolphin.png", "中華白海豚寶寶"],
-  "七年級上學期-英文-第三次段考": ["assets/baby-eurasian-otter.png", "歐亞水獺寶寶"],
-  "七年級上學期-數學-第三次段考": ["assets/baby-formosan-flying-fox.png", "台灣狐蝠寶寶"],
-  "七年級上學期-生物-第三次段考": ["assets/baby-maroon-oriole.png", "朱鸝寶寶"],
-  "七年級上學期-社會-第三次段考": ["assets/baby-grass-owl.png", "草鴞寶寶"],
-  "七年級下學期-國文-第一次段考": ["assets/baby-tasmanian-devil.png", "塔斯馬尼亞惡魔寶寶"],
-  "七年級下學期-英文-第一次段考": ["assets/baby-kookaburra.png", "笑翠鳥寶寶"],
-  "七年級下學期-數學-第一次段考": ["assets/baby-dugong.png", "儒艮寶寶"],
-  "七年級下學期-生物-第一次段考": ["assets/baby-kangaroo.png", "袋鼠寶寶"],
-  "七年級下學期-社會-第一次段考": ["assets/baby-sloth.png", "樹懶寶寶"],
+  "八年級上學期-國文-第三次段考": ["assets/baby-golden-lion-tamarin.jpeg", "金獅面狨寶寶"],
+  "八年級上學期-英文-第三次段考": ["assets/baby-fennec-fox.jpeg", "耳廓狐寶寶"],
+  "八年級上學期-數學-第三次段考": ["assets/baby-komodo-dragon.jpeg", "科摩多龍寶寶"],
+  "八年級上學期-理化-第三次段考": ["assets/baby-south-american-sea-lion.jpeg", "南美海獅寶寶"],
+  "八年級上學期-社會-第三次段考": ["assets/baby-lion-tailed-macaque.jpeg", "獅尾狒狒寶寶"],
+  "七年級上學期-國文-第一次段考": ["assets/baby-leopard-cat.jpeg", "石虎寶寶"],
+  "七年級上學期-英文-第一次段考": ["assets/baby-pangolin.jpeg", "穿山甲寶寶"],
+  "七年級上學期-數學-第一次段考": ["assets/baby-crab-eating-mongoose.jpeg", "食蟹獴寶寶"],
+  "七年級上學期-生物-第一次段考": ["assets/baby-masked-palm-civet.jpeg", "麝香貓寶寶"],
+  "七年級上學期-社會-第一次段考": ["assets/baby-yellow-throated-marten.jpeg", "黃喉貂寶寶"],
+  "七年級上學期-國文-第二次段考": ["assets/baby-black-faced-spoonbill.jpeg", "黑面琵鷺寶寶"],
+  "七年級上學期-英文-第二次段考": ["assets/baby-mountain-hawk-eagle.jpeg", "熊鷹寶寶"],
+  "七年級上學期-數學-第二次段考": ["assets/baby-swinhoe-pheasant.jpeg", "藍腹鷴寶寶"],
+  "七年級上學期-生物-第二次段考": ["assets/baby-mikado-pheasant.jpeg", "帝雉寶寶"],
+  "七年級上學期-社會-第二次段考": ["assets/baby-malayan-night-heron.jpeg", "黑冠麻鷺寶寶"],
+  "七年級上學期-國文-第三次段考": ["assets/baby-chinese-white-dolphin.jpeg", "中華白海豚寶寶"],
+  "七年級上學期-英文-第三次段考": ["assets/baby-eurasian-otter.jpeg", "歐亞水獺寶寶"],
+  "七年級上學期-數學-第三次段考": ["assets/baby-formosan-flying-fox.jpeg", "台灣狐蝠寶寶"],
+  "七年級上學期-生物-第三次段考": ["assets/baby-maroon-oriole.jpeg", "朱鸝寶寶"],
+  "七年級上學期-社會-第三次段考": ["assets/baby-grass-owl.jpeg", "草鴞寶寶"],
+  "七年級下學期-國文-第一次段考": ["assets/baby-tasmanian-devil.jpeg", "塔斯馬尼亞惡魔寶寶"],
+  "七年級下學期-英文-第一次段考": ["assets/baby-kookaburra.jpeg", "笑翠鳥寶寶"],
+  "七年級下學期-數學-第一次段考": ["assets/baby-dugong.jpeg", "儒艮寶寶"],
+  "七年級下學期-生物-第一次段考": ["assets/baby-kangaroo.jpeg", "袋鼠寶寶"],
+  "七年級下學期-社會-第一次段考": ["assets/baby-sloth.jpeg", "樹懶寶寶"],
   "自主學習-國文-七升八的暑假": ["assets/baby-persian-cat.jpg", "波斯貓寶寶"],
   "自主學習-英文-七升八的暑假": ["assets/baby-american-shorthair-cat.jpg", "美國短毛貓寶寶"],
   "自主學習-數學-七升八的暑假": ["assets/baby-bengal-cat.jpg", "孟加拉豹貓寶寶"],
@@ -151,56 +151,56 @@ const termBabyImages = {
 };
 
 const termAdultImages = {
-  "八年級上學期-國文-第一次段考": ["assets/adult-okapi.png", "霍加狓"],
-  "八年級上學期-英文-第一次段考": ["assets/adult-hawksbill-sea-turtle.png", "玳瑁海龜"],
-  "八年級上學期-數學-第一次段考": ["assets/adult-iberian-lynx.png", "伊比利亞猞猁"],
-  "八年級上學期-理化-第一次段考": ["assets/adult-blue-whale.png", "藍鯨"],
-  "八年級上學期-社會-第一次段考": ["assets/adult-ring-tailed-lemur.png", "尾狐猴"],
-  "八年級下學期-國文-第一次段考": ["assets/adult-pygmy-marmoset.png", "侏儒狨猴"],
-  "八年級下學期-英文-第一次段考": ["assets/adult-brown-throated-sloth.png", "棕喉樹懶"],
-  "八年級下學期-數學-第一次段考": ["assets/adult-capybara.png", "水豚"],
-  "八年級下學期-理化-第一次段考": ["assets/adult-armadillo.png", "犰狳"],
-  "八年級下學期-社會-第一次段考": ["assets/adult-toucan.png", "巨嘴鳥"],
-  "八年級上學期-國文-第二次段考": ["assets/adult-blue-footed-booby.png", "藍腳鰹鳥"],
-  "八年級上學期-英文-第二次段考": ["assets/adult-alpaca.png", "羊駝"],
-  "八年級上學期-數學-第二次段考": ["assets/adult-kiwi-bird.png", "奇異鳥"],
-  "八年級上學期-理化-第二次段考": ["assets/adult-andean-condor.png", "安地斯神鷹"],
-  "八年級上學期-社會-第二次段考": ["assets/adult-red-fox.png", "紅狐"],
-  "八年級下學期-國文-第二次段考": ["assets/adult-harpy-eagle.png", "角鵰"],
-  "八年級下學期-英文-第二次段考": ["assets/adult-lesser-anteater.png", "小食蟻獸"],
-  "八年級下學期-數學-第二次段考": ["assets/adult-south-american-coati.png", "南美浣熊"],
-  "八年級下學期-理化-第二次段考": ["assets/adult-jaguar.png", "美洲豹"],
-  "八年級下學期-社會-第二次段考": ["assets/adult-scarlet-macaw.png", "紅金剛鸚鵡"],
+  "八年級上學期-國文-第一次段考": ["assets/adult-okapi.jpeg", "霍加狓"],
+  "八年級上學期-英文-第一次段考": ["assets/adult-hawksbill-sea-turtle.jpeg", "玳瑁海龜"],
+  "八年級上學期-數學-第一次段考": ["assets/adult-iberian-lynx.jpeg", "伊比利亞猞猁"],
+  "八年級上學期-理化-第一次段考": ["assets/adult-blue-whale.jpeg", "藍鯨"],
+  "八年級上學期-社會-第一次段考": ["assets/adult-ring-tailed-lemur.jpeg", "尾狐猴"],
+  "八年級下學期-國文-第一次段考": ["assets/adult-pygmy-marmoset.jpeg", "侏儒狨猴"],
+  "八年級下學期-英文-第一次段考": ["assets/adult-brown-throated-sloth.jpeg", "棕喉樹懶"],
+  "八年級下學期-數學-第一次段考": ["assets/adult-capybara.jpeg", "水豚"],
+  "八年級下學期-理化-第一次段考": ["assets/adult-armadillo.jpeg", "犰狳"],
+  "八年級下學期-社會-第一次段考": ["assets/adult-toucan.jpeg", "巨嘴鳥"],
+  "八年級上學期-國文-第二次段考": ["assets/adult-blue-footed-booby.jpeg", "藍腳鰹鳥"],
+  "八年級上學期-英文-第二次段考": ["assets/adult-alpaca.jpeg", "羊駝"],
+  "八年級上學期-數學-第二次段考": ["assets/adult-kiwi-bird.jpeg", "奇異鳥"],
+  "八年級上學期-理化-第二次段考": ["assets/adult-andean-condor.jpeg", "安地斯神鷹"],
+  "八年級上學期-社會-第二次段考": ["assets/adult-red-fox.jpeg", "紅狐"],
+  "八年級下學期-國文-第二次段考": ["assets/adult-harpy-eagle.jpeg", "角鵰"],
+  "八年級下學期-英文-第二次段考": ["assets/adult-lesser-anteater.jpeg", "小食蟻獸"],
+  "八年級下學期-數學-第二次段考": ["assets/adult-south-american-coati.jpeg", "南美浣熊"],
+  "八年級下學期-理化-第二次段考": ["assets/adult-jaguar.jpeg", "美洲豹"],
+  "八年級下學期-社會-第二次段考": ["assets/adult-scarlet-macaw.jpeg", "紅金剛鸚鵡"],
   "八年級下學期-國文-第三次段考": ["assets/adult-caracal-habitat.jpg", "獰貓"],
   "八年級下學期-英文-第三次段考": ["assets/adult-serval-habitat.jpg", "藪貓"],
   "八年級下學期-數學-第三次段考": ["assets/adult-shoebill-habitat.jpg", "鯨頭鸛"],
   "八年級下學期-理化-第三次段考": ["assets/adult-bongo-antelope-habitat.jpg", "邦戈羚羊"],
   "八年級下學期-社會-第三次段考": ["assets/adult-secretary-bird-habitat.jpg", "秘書鳥"],
-  "八年級上學期-國文-第三次段考": ["assets/adult-golden-lion-tamarin.png", "金獅面狨"],
-  "八年級上學期-英文-第三次段考": ["assets/adult-fennec-fox.png", "耳廓狐"],
-  "八年級上學期-數學-第三次段考": ["assets/adult-komodo-dragon.png", "科摩多龍"],
-  "八年級上學期-理化-第三次段考": ["assets/adult-south-american-sea-lion.png", "南美海獅"],
-  "八年級上學期-社會-第三次段考": ["assets/adult-lion-tailed-macaque.png", "獅尾狒狒"],
-  "七年級上學期-國文-第一次段考": ["assets/adult-leopard-cat.png", "石虎"],
-  "七年級上學期-英文-第一次段考": ["assets/adult-pangolin.png", "穿山甲"],
-  "七年級上學期-數學-第一次段考": ["assets/adult-crab-eating-mongoose.png", "食蟹獴"],
-  "七年級上學期-生物-第一次段考": ["assets/adult-masked-palm-civet.png", "麝香貓"],
-  "七年級上學期-社會-第一次段考": ["assets/adult-yellow-throated-marten.png", "黃喉貂"],
-  "七年級上學期-國文-第二次段考": ["assets/adult-black-faced-spoonbill.png", "黑面琵鷺"],
-  "七年級上學期-英文-第二次段考": ["assets/adult-mountain-hawk-eagle.png", "熊鷹"],
-  "七年級上學期-數學-第二次段考": ["assets/adult-swinhoe-pheasant.png", "藍腹鷴"],
-  "七年級上學期-生物-第二次段考": ["assets/adult-mikado-pheasant.png", "帝雉"],
-  "七年級上學期-社會-第二次段考": ["assets/adult-malayan-night-heron.png", "黑冠麻鷺"],
-  "七年級上學期-國文-第三次段考": ["assets/adult-chinese-white-dolphin.png", "中華白海豚"],
-  "七年級上學期-英文-第三次段考": ["assets/adult-eurasian-otter.png", "歐亞水獺"],
-  "七年級上學期-數學-第三次段考": ["assets/adult-formosan-flying-fox.png", "台灣狐蝠"],
-  "七年級上學期-生物-第三次段考": ["assets/adult-maroon-oriole.png", "朱鸝"],
-  "七年級上學期-社會-第三次段考": ["assets/adult-grass-owl.png", "草鴞"],
-  "七年級下學期-國文-第一次段考": ["assets/adult-tasmanian-devil.png", "塔斯馬尼亞惡魔"],
-  "七年級下學期-英文-第一次段考": ["assets/adult-kookaburra.png", "笑翠鳥"],
-  "七年級下學期-數學-第一次段考": ["assets/adult-dugong.png", "儒艮"],
-  "七年級下學期-生物-第一次段考": ["assets/adult-kangaroo.png", "袋鼠"],
-  "七年級下學期-社會-第一次段考": ["assets/adult-sloth.png", "樹懶"],
+  "八年級上學期-國文-第三次段考": ["assets/adult-golden-lion-tamarin.jpeg", "金獅面狨"],
+  "八年級上學期-英文-第三次段考": ["assets/adult-fennec-fox.jpeg", "耳廓狐"],
+  "八年級上學期-數學-第三次段考": ["assets/adult-komodo-dragon.jpeg", "科摩多龍"],
+  "八年級上學期-理化-第三次段考": ["assets/adult-south-american-sea-lion.jpeg", "南美海獅"],
+  "八年級上學期-社會-第三次段考": ["assets/adult-lion-tailed-macaque.jpeg", "獅尾狒狒"],
+  "七年級上學期-國文-第一次段考": ["assets/adult-leopard-cat.jpeg", "石虎"],
+  "七年級上學期-英文-第一次段考": ["assets/adult-pangolin.jpeg", "穿山甲"],
+  "七年級上學期-數學-第一次段考": ["assets/adult-crab-eating-mongoose.jpeg", "食蟹獴"],
+  "七年級上學期-生物-第一次段考": ["assets/adult-masked-palm-civet.jpeg", "麝香貓"],
+  "七年級上學期-社會-第一次段考": ["assets/adult-yellow-throated-marten.jpeg", "黃喉貂"],
+  "七年級上學期-國文-第二次段考": ["assets/adult-black-faced-spoonbill.jpeg", "黑面琵鷺"],
+  "七年級上學期-英文-第二次段考": ["assets/adult-mountain-hawk-eagle.jpeg", "熊鷹"],
+  "七年級上學期-數學-第二次段考": ["assets/adult-swinhoe-pheasant.jpeg", "藍腹鷴"],
+  "七年級上學期-生物-第二次段考": ["assets/adult-mikado-pheasant.jpeg", "帝雉"],
+  "七年級上學期-社會-第二次段考": ["assets/adult-malayan-night-heron.jpeg", "黑冠麻鷺"],
+  "七年級上學期-國文-第三次段考": ["assets/adult-chinese-white-dolphin.jpeg", "中華白海豚"],
+  "七年級上學期-英文-第三次段考": ["assets/adult-eurasian-otter.jpeg", "歐亞水獺"],
+  "七年級上學期-數學-第三次段考": ["assets/adult-formosan-flying-fox.jpeg", "台灣狐蝠"],
+  "七年級上學期-生物-第三次段考": ["assets/adult-maroon-oriole.jpeg", "朱鸝"],
+  "七年級上學期-社會-第三次段考": ["assets/adult-grass-owl.jpeg", "草鴞"],
+  "七年級下學期-國文-第一次段考": ["assets/adult-tasmanian-devil.jpeg", "塔斯馬尼亞惡魔"],
+  "七年級下學期-英文-第一次段考": ["assets/adult-kookaburra.jpeg", "笑翠鳥"],
+  "七年級下學期-數學-第一次段考": ["assets/adult-dugong.jpeg", "儒艮"],
+  "七年級下學期-生物-第一次段考": ["assets/adult-kangaroo.jpeg", "袋鼠"],
+  "七年級下學期-社會-第一次段考": ["assets/adult-sloth.jpeg", "樹懶"],
   "自主學習-國文-七升八的暑假": ["assets/adult-persian-cat.jpg", "波斯貓"],
   "自主學習-英文-七升八的暑假": ["assets/adult-american-shorthair-cat.jpg", "美國短毛貓"],
   "自主學習-數學-七升八的暑假": ["assets/adult-bengal-cat.jpg", "孟加拉豹貓"],
@@ -872,16 +872,6 @@ function touchStateForSync() {
     deviceName: getCloudDeviceName()
   };
 }
-function syncMetaOf(data) {
-  return data && typeof data === "object" && !Array.isArray(data) && data[syncMetaKey] ? data[syncMetaKey] : {};
-}
-function syncTimeOf(data) {
-  const time = Date.parse(syncMetaOf(data).updatedAt || "");
-  return Number.isFinite(time) ? time : 0;
-}
-function syncDeviceNameOf(data) {
-  return syncMetaOf(data).deviceName || "其他裝置";
-}
 function saveState() {
   if (!cloudApplyingRemote && !suppressCloudQueue) touchStateForSync();
   localStorage.setItem(storageKey, JSON.stringify(state));
@@ -1390,7 +1380,7 @@ function renderExamGrowth() {
     const score = completedTaskCount(tasks);
     const target = tasks.length;
     const percent = target ? Math.round((score / target) * 100) : 0;
-    return '<div class="growth-row"><span>' + subject + '</span><strong>' + score + '/' + target + '（' + percent + '%）</strong></div>';
+    return '<div class="growth-row"><span>' + escapeHtml(subject) + '</span><strong>' + score + '/' + target + '（' + percent + '%）</strong></div>';
   }).join("");
 }
 
@@ -1695,15 +1685,21 @@ function normalizeSupabaseProjectUrl(value) {
     return text.replace(/\/rest\/v1\/?$/i, "").replace(/\/+$/, "");
   }
 }
+// 預設連線到家裡的 Supabase 專案（publishable key 可公開；權限由 RLS 控管）。
+// 使用者在「雲端同步」另存設定時以使用者的為準。
+const defaultCloudConfig = {
+  projectUrl: "https://zcrfakiogxvmedaiwlyr.supabase.co",
+  anonKey: "sb_publishable_Lx2CnO94ozUL3DiFE07O4A_TNg50qTl"
+};
 function loadCloudConfig() {
   try {
     const config = JSON.parse(localStorage.getItem(cloudConfigKey) || "{}");
     return {
-      projectUrl: normalizeSupabaseProjectUrl(config.projectUrl),
-      anonKey: String(config.anonKey || "").trim()
+      projectUrl: normalizeSupabaseProjectUrl(config.projectUrl) || defaultCloudConfig.projectUrl,
+      anonKey: String(config.anonKey || "").trim() || defaultCloudConfig.anonKey
     };
   } catch {
-    return { projectUrl: "", anonKey: "" };
+    return { ...defaultCloudConfig };
   }
 }
 function saveCloudConfig(config) {
@@ -1755,125 +1751,160 @@ function completeStateSnapshot() {
     suppressCloudQueue = previous;
   }
 }
-function cloudReady() {
-  return Boolean(cloudClient && cloudUser && !cloudSyncing);
-}
 function queueCloudSave() {
   if (!cloudClient || !cloudUser) return;
   clearTimeout(cloudSaveTimer);
   cloudSaveTimer = setTimeout(() => {
-    pushCloudState({ silent: true });
+    cloudSaveTimer = null;
+    syncCloudState({ silent: true });
   }, 1200);
+}
+const autoBackupPrefix = "自動備份：";
+const autoBackupKeep = 20;
+const cloudSyncBaseKey = storageKey + "-sync-base";
+let cloudSyncPromise = null;
+let cloudSyncAgain = false;
+// 存進 review_app_backups，只保留最近 20 份自動備份（手動備份不動）。
+async function backupCloudData(data, reason) {
+  const { error } = await cloudClient
+    .from("review_app_backups")
+    .insert({
+      user_id: cloudUser.id,
+      data,
+      current_view: {},
+      backup_name: autoBackupPrefix + reason + "（" + getCloudDeviceName() + " 同步時）"
+    });
+  if (error) throw error;
+  const { data: oldRows } = await cloudClient
+    .from("review_app_backups")
+    .select("id")
+    .eq("user_id", cloudUser.id)
+    .like("backup_name", autoBackupPrefix + "%")
+    .order("created_at", { ascending: false })
+    .range(autoBackupKeep, autoBackupKeep + 99);
+  if (oldRows && oldRows.length) {
+    await cloudClient.from("review_app_backups").delete().in("id", oldRows.map((row) => row.id));
+  }
 }
 function cloudErrorMessage(error) {
   const text = error && (error.message || error.error_description || error.details);
   return text ? "雲端失敗：" + text : "雲端失敗";
 }
-function cloudRowTime(row) {
-  if (!row || !row.data) return 0;
-  const metaTime = syncTimeOf(row.data);
-  if (metaTime) return metaTime;
-  const serverTime = Date.parse(row.updated_at || "");
-  return Number.isFinite(serverTime) ? serverTime : 0;
+// 同步基準：上次跟雲端一致時的內容與雲端版本（updated_at）。userId 為 null 表示來自內建備份。
+function loadSyncBase() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(cloudSyncBaseKey) || "null");
+    if (!saved || !saved.data) return null;
+    if (saved.userId && cloudUser && saved.userId !== cloudUser.id) return null;
+    return { data: saved.data, version: saved.version || null };
+  } catch {
+    return null;
+  }
 }
-function applyCloudRow(row) {
+function saveSyncBase(data, version) {
+  localStorage.setItem(cloudSyncBaseKey, JSON.stringify({ userId: cloudUser.id, version, data }));
+}
+function applySyncedState(data) {
   cloudApplyingRemote = true;
-  state = row.data && typeof row.data === "object" && !Array.isArray(row.data) ? row.data : {};
-  delete state[blankDefaultKey()];
-  localStorage.setItem(storageKey, JSON.stringify(state));
-  if (row.current_view && row.current_view.term && row.current_view.exam) {
-    selectedTerm = row.current_view.term;
-    selectedExam = row.current_view.exam;
-    selectedSubject = normalizeSubjectForTerm(row.current_view.subject || selectedSubject, selectedTerm, selectedExam);
-  }
-  pageByPlan = {};
-  render();
-  cloudApplyingRemote = false;
-}
-async function pushCloudState(options = {}) {
-  if (!cloudClient || !cloudUser) return false;
-  cloudSyncing = true;
-  if (!options.silent) {
-    setCloudStatus("正在上傳雲端...", "syncing");
-    setCloudDialogStatus("正在上傳雲端...");
-  }
   try {
-    const localSnapshot = completeStateSnapshot();
-    const localTime = syncTimeOf(localSnapshot);
-    const { data: remoteRow, error: readError } = await cloudClient
-      .from("review_app_state")
-      .select("data,current_view,updated_at")
-      .eq("user_id", cloudUser.id)
-      .maybeSingle();
-    if (readError) throw readError;
-    if (remoteRow && remoteRow.data && cloudRowTime(remoteRow) > localTime) {
-      applyCloudRow(remoteRow);
-      const deviceName = syncDeviceNameOf(remoteRow.data);
-      setCloudStatus("雲端較新，已改用 " + deviceName + " 的資料", "ok");
-      if (!options.silent) setCloudDialogStatus("雲端資料較新，已下載 " + deviceName + " 的資料，未覆蓋雲端", "ok");
-      return true;
-    }
-    const payload = {
-      user_id: cloudUser.id,
-      data: localSnapshot,
-      current_view: currentViewData(),
-      app_version: storageKey
-    };
-    const { error } = await cloudClient
-      .from("review_app_state")
-      .upsert(payload, { onConflict: "user_id" });
-    if (error) throw error;
-    setCloudStatus("雲端已同步", "ok");
-    if (!options.silent) setCloudDialogStatus("已上傳本機資料到雲端", "ok");
-    return true;
-  } catch (error) {
-    setCloudStatus("雲端同步失敗", "error");
-    if (!options.silent) setCloudDialogStatus(cloudErrorMessage(error), "error");
-    return false;
-  } finally {
-    cloudSyncing = false;
-  }
-}
-async function pullCloudState(options = {}) {
-  if (!cloudClient || !cloudUser) return false;
-  cloudSyncing = true;
-  setCloudStatus("正在讀取雲端...", "syncing");
-  if (!options.silent) setCloudDialogStatus("正在讀取雲端...");
-  try {
-    const { data, error } = await cloudClient
-      .from("review_app_state")
-      .select("data,current_view,updated_at")
-      .eq("user_id", cloudUser.id)
-      .maybeSingle();
-    if (error) throw error;
-    if (!data || !data.data) {
-      cloudSyncing = false;
-      await pushCloudState({ silent: options.silent });
-      if (!options.silent) setCloudDialogStatus(state[blankDefaultKey()] ? "雲端尚無資料，已先建立空白資料" : "雲端尚無資料，已先上傳目前這份", "ok");
-      return true;
-    }
-    const localSnapshot = completeStateSnapshot();
-    if (syncTimeOf(localSnapshot) > cloudRowTime(data)) {
-      cloudSyncing = false;
-      const uploaded = await pushCloudState({ silent: options.silent });
-      if (uploaded) {
-        setCloudStatus("本機較新，已上傳目前裝置資料", "ok");
-        if (!options.silent) setCloudDialogStatus("本機資料較新，已上傳目前裝置資料", "ok");
-      }
-      return uploaded;
-    }
-    applyCloudRow(data);
-    setCloudStatus("雲端已同步", "ok");
-    if (!options.silent) setCloudDialogStatus("已下載雲端資料", "ok");
-    return true;
-  } catch (error) {
-    setCloudStatus("雲端同步失敗", "error");
-    if (!options.silent) setCloudDialogStatus(cloudErrorMessage(error), "error");
-    return false;
+    const meta = state[syncMetaKey];
+    state = JSON.parse(JSON.stringify(data));
+    if (meta) state[syncMetaKey] = meta;
+    delete state[blankDefaultKey()];
+    localStorage.setItem(storageKey, JSON.stringify(state));
+    render();
+    const learningDialog = document.querySelector("#learningStatusDialog");
+    if (learningDialog && learningDialog.classList.contains("open")) renderLearningStatus();
   } finally {
     cloudApplyingRemote = false;
+  }
+}
+function cloudStatePayload(data) {
+  return { data, current_view: currentViewData(), app_version: storageKey };
+}
+async function fetchCloudRow() {
+  const { data, error } = await cloudClient
+    .from("review_app_state")
+    .select("data,updated_at")
+    .eq("user_id", cloudUser.id)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+async function insertCloudRow(data) {
+  const { data: row, error } = await cloudClient
+    .from("review_app_state")
+    .insert({ user_id: cloudUser.id, ...cloudStatePayload(data) })
+    .select("updated_at")
+    .single();
+  if (error) {
+    if (error.code === "23505") return { ok: false, conflict: true };
+    throw error;
+  }
+  return { ok: true, version: row.updated_at };
+}
+// 只有雲端版本仍是 expectedVersion 才寫入；別台裝置先寫過就回傳 ok:false，改走合併。
+async function updateCloudRow(data, expectedVersion) {
+  const { data: rows, error } = await cloudClient
+    .from("review_app_state")
+    .update(cloudStatePayload(data))
+    .eq("user_id", cloudUser.id)
+    .eq("updated_at", expectedVersion)
+    .select("updated_at");
+  if (error) throw error;
+  return rows && rows.length ? { ok: true, version: rows[0].updated_at } : { ok: false };
+}
+function syncResultMessage(result) {
+  const firstSync = result.conflicts.find((text) => text.startsWith("(首次同步"));
+  if (firstSync) return firstSync.slice(1, -1) + "，另一份已存進雲端備份";
+  const text = { none: "雲端已同步", pushed: "雲端已同步", pulled: "已取得其他裝置的更新", merged: "已合併其他裝置的更新" }[result.action] || "雲端已同步";
+  return result.conflicts.length ? text + "（" + result.conflicts.length + " 處兩邊都改過，以這台為準；原雲端資料已自動備份）" : text;
+}
+async function runCloudSync(options) {
+  cloudSyncing = true;
+  if (!options.silent) {
+    setCloudStatus("正在同步雲端...", "syncing");
+    setCloudDialogStatus("正在同步雲端...");
+  }
+  try {
+    const result = await window.ReviewSync.syncWithCloud({
+      getLocal: completeStateSnapshot,
+      getBase: loadSyncBase,
+      setBase: saveSyncBase,
+      applyLocal: applySyncedState,
+      fetchRemote: fetchCloudRow,
+      insertRemote: insertCloudRow,
+      updateRemote: updateCloudRow,
+      backup: backupCloudData,
+      makeMeta: () => ({ updatedAt: new Date().toISOString(), deviceId: getCloudDeviceId(), deviceName: getCloudDeviceName() })
+    });
+    const message = syncResultMessage(result);
+    setCloudStatus(message, "ok");
+    if (!options.silent) setCloudDialogStatus(message, "ok");
+    return true;
+  } catch (error) {
+    setCloudStatus("雲端同步失敗", "error");
+    if (!options.silent) setCloudDialogStatus(cloudErrorMessage(error), "error");
+    return false;
+  } finally {
     cloudSyncing = false;
   }
+}
+// 同一時間只跑一個同步；進行中又有修改就在結束後再跑一次。
+function syncCloudState(options = {}) {
+  if (!cloudClient || !cloudUser) return Promise.resolve(false);
+  if (cloudSyncPromise) {
+    cloudSyncAgain = true;
+    return cloudSyncPromise;
+  }
+  cloudSyncPromise = runCloudSync(options).finally(() => {
+    cloudSyncPromise = null;
+    if (cloudSyncAgain) {
+      cloudSyncAgain = false;
+      syncCloudState({ silent: true });
+    }
+  });
+  return cloudSyncPromise;
 }
 async function createCloudBackup() {
   if (!cloudClient || !cloudUser) return setCloudDialogStatus("請先登入雲端", "error");
@@ -1907,24 +1938,11 @@ async function refreshCloudSession(options = {}) {
   cloudUser = data && data.session && data.session.user ? data.session.user : null;
   if (cloudUser) {
     setCloudStatus("雲端已登入：" + cloudUser.email, "ok");
-    if (options.pull) await pullCloudState({ silent: true });
+    if (options.pull) await syncCloudState({ silent: true });
   } else {
     setCloudStatus("雲端尚未登入");
   }
   return cloudUser;
-}
-async function cloudSignUp() {
-  const email = document.querySelector("#cloudEmail").value.trim();
-  const password = document.querySelector("#cloudPassword").value;
-  if (!email || !password) return setCloudDialogStatus("請輸入 Email 和密碼", "error");
-  const client = cloudClient || configureCloudClient();
-  if (!client) return setCloudDialogStatus("請先儲存 Supabase 設定", "error");
-  setCloudDialogStatus("正在建立帳號...");
-  const { data, error } = await client.auth.signUp({ email, password });
-  if (error) return setCloudDialogStatus(cloudErrorMessage(error), "error");
-  cloudUser = data && data.session && data.session.user ? data.session.user : null;
-  setCloudDialogStatus("帳號已建立；若 Supabase 要求驗證信箱，請先到信箱完成驗證", "ok");
-  if (cloudUser) await pushCloudState({ silent: true });
 }
 async function cloudSignIn() {
   const email = document.querySelector("#cloudEmail").value.trim();
@@ -1936,7 +1954,7 @@ async function cloudSignIn() {
   const { data, error } = await client.auth.signInWithPassword({ email, password });
   if (error) return setCloudDialogStatus(cloudErrorMessage(error), "error");
   cloudUser = data && data.user ? data.user : null;
-  await pullCloudState();
+  await syncCloudState();
 }
 async function cloudSignOut() {
   if (!cloudClient) return;
@@ -1975,7 +1993,28 @@ function csvCell(value) {
   const safeText = /^[=+\-@]/.test(text) ? "'" + text : text;
   return '"' + safeText.replace(/"/g, '""') + '"';
 }
+function nativePlugins() {
+  const cap = window.Capacitor;
+  return cap && typeof cap.isNativePlatform === "function" && cap.isNativePlatform() ? cap.Plugins : null;
+}
+async function shareTextFileNative(plugins, fileName, content) {
+  const { Filesystem, Share } = plugins;
+  const written = await Filesystem.writeFile({ path: fileName, data: content, directory: "CACHE", encoding: "utf8" });
+  try {
+    await Share.share({ title: fileName, files: [written.uri] });
+  } catch (error) {
+    if (!/cancel/i.test(String(error && error.message))) throw error;
+  } finally {
+    // 分享面板關閉後刪掉暫存檔，不在 App 快取留下完整個資副本
+    await Filesystem.deleteFile({ path: fileName, directory: "CACHE" }).catch(() => {});
+  }
+}
 function downloadTextFile(fileName, content, type) {
+  const plugins = nativePlugins();
+  if (plugins && plugins.Filesystem && plugins.Share) {
+    shareTextFileNative(plugins, fileName, content).catch(() => setBackupStatus("檔案分享失敗", "error"));
+    return;
+  }
   const blob = new Blob([content], { type });
   const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
@@ -2130,16 +2169,11 @@ document.querySelector("#saveCloudSettings").addEventListener("click", () => {
   refreshCloudSession();
   setCloudDialogStatus("設定已儲存", "ok");
 });
-document.querySelector("#cloudSignUp").addEventListener("click", cloudSignUp);
 document.querySelector("#cloudSignIn").addEventListener("click", cloudSignIn);
 document.querySelector("#cloudSignOut").addEventListener("click", cloudSignOut);
-document.querySelector("#cloudUpload").addEventListener("click", () => {
-  if (!cloudReady()) return setCloudDialogStatus("請先登入雲端", "error");
-  pushCloudState();
-});
-document.querySelector("#cloudDownload").addEventListener("click", () => {
-  if (!cloudReady()) return setCloudDialogStatus("請先登入雲端", "error");
-  pullCloudState();
+document.querySelector("#cloudSyncNow").addEventListener("click", () => {
+  if (!cloudClient || !cloudUser) return setCloudDialogStatus("請先登入雲端", "error");
+  syncCloudState();
 });
 document.querySelector("#cloudBackup").addEventListener("click", createCloudBackup);
 document.querySelector("#openTracker").addEventListener("click", openTrackerDialog);
@@ -2178,6 +2212,16 @@ document.querySelector("#editorAddTask").addEventListener("click", () => {
   pageByPlan[key] = Math.ceil(tasks.length / tasksPerPage);
   render();
   renderTaskEditor();
+});
+// iPad 切到背景時計時器會暫停：離開前把還沒送出的修改立刻上傳；回到前景時再比對一次雲端。
+document.addEventListener("visibilitychange", () => {
+  if (!cloudClient || !cloudUser) return;
+  if (document.visibilityState === "hidden") {
+    if (!cloudSaveTimer) return;
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer = null;
+  }
+  syncCloudState({ silent: true });
 });
 render();
 initCloudSync();
