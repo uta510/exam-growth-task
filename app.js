@@ -27,6 +27,8 @@ const examMenuGroups = [
 const maxScore = 30;
 const storageKey = "review-adventure-v2";
 const cloudConfigKey = storageKey + "-supabase-config";
+const cloudDeviceKey = storageKey + "-device-id";
+const syncMetaKey = "_syncMeta";
 const tasksPerPage = 10;
 let pageByPlan = {};
 const babyImages = {
@@ -844,7 +846,44 @@ function loadState() {
     return { [blankDefaultKey()]: true };
   }
 }
+function getCloudDeviceId() {
+  let id = localStorage.getItem(cloudDeviceKey);
+  if (!id) {
+    id = window.crypto && typeof window.crypto.randomUUID === "function"
+      ? window.crypto.randomUUID()
+      : "device-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    localStorage.setItem(cloudDeviceKey, id);
+  }
+  return id;
+}
+function getCloudDeviceName() {
+  const text = (typeof navigator !== "undefined" && navigator.userAgent ? navigator.userAgent : "").toLowerCase();
+  if (text.includes("ipad")) return "iPad";
+  if (text.includes("iphone")) return "iPhone";
+  if (text.includes("android")) return "Android";
+  if (text.includes("windows")) return "Windows 電腦";
+  if (text.includes("macintosh")) return "Mac";
+  return "目前裝置";
+}
+function touchStateForSync() {
+  state[syncMetaKey] = {
+    updatedAt: new Date().toISOString(),
+    deviceId: getCloudDeviceId(),
+    deviceName: getCloudDeviceName()
+  };
+}
+function syncMetaOf(data) {
+  return data && typeof data === "object" && !Array.isArray(data) && data[syncMetaKey] ? data[syncMetaKey] : {};
+}
+function syncTimeOf(data) {
+  const time = Date.parse(syncMetaOf(data).updatedAt || "");
+  return Number.isFinite(time) ? time : 0;
+}
+function syncDeviceNameOf(data) {
+  return syncMetaOf(data).deviceName || "其他裝置";
+}
 function saveState() {
+  if (!cloudApplyingRemote && !suppressCloudQueue) touchStateForSync();
   localStorage.setItem(storageKey, JSON.stringify(state));
   if (!cloudApplyingRemote && !suppressCloudQueue) queueCloudSave();
 }
@@ -1308,16 +1347,16 @@ function renderTabs() {
   const currentExamValue = selectedTerm + "|" + selectedExam;
   const visibleSubjects = currentSubjects();
   selectedSubject = normalizeSubjectForTerm(selectedSubject);
-  subjectTabs.innerHTML = visibleSubjects.map((subject) => '<button class="' + (subject === selectedSubject ? 'active' : '') + '" type="button" data-subject="' + subject + '">' + subject + '</button>').join("");
+  subjectTabs.innerHTML = visibleSubjects.map((subject) => '<button class="' + (subject === selectedSubject ? 'active' : '') + '" type="button" data-subject="' + escapeHtml(subject) + '">' + escapeHtml(subject) + '</button>').join("");
   examTabs.innerHTML = examMenuGroups.map((group) => {
     const groupValues = group.items.map((item) => item.term + "|" + item.exam);
     const hasCurrentValue = groupValues.includes(currentExamValue);
-    const placeholder = '<option value="" ' + (!hasCurrentValue ? 'selected' : '') + '>' + group.label + '</option>';
+    const placeholder = '<option value="" ' + (!hasCurrentValue ? 'selected' : '') + '>' + escapeHtml(group.label) + '</option>';
     const options = group.items.map((item) => {
       const value = item.term + "|" + item.exam;
-      return '<option value="' + value + '" ' + (value === currentExamValue ? 'selected' : '') + '>' + item.label + '</option>';
+      return '<option value="' + escapeHtml(value) + '" ' + (value === currentExamValue ? 'selected' : '') + '>' + escapeHtml(item.label) + '</option>';
     }).join("");
-    return '<select class="exam-select" aria-label="' + group.label + '選單" data-exam-group="' + group.label + '">' + placeholder + options + '</select>';
+    return '<select class="exam-select" aria-label="' + escapeHtml(group.label) + '選單" data-exam-group="' + escapeHtml(group.label) + '">' + placeholder + options + '</select>';
   }).join("");
   subjectTabs.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => { selectedSubject = button.dataset.subject; render(); }));
   examTabs.querySelectorAll(".exam-select").forEach((select) => select.addEventListener("change", (event) => {
@@ -1730,6 +1769,27 @@ function cloudErrorMessage(error) {
   const text = error && (error.message || error.error_description || error.details);
   return text ? "雲端失敗：" + text : "雲端失敗";
 }
+function cloudRowTime(row) {
+  if (!row || !row.data) return 0;
+  const metaTime = syncTimeOf(row.data);
+  if (metaTime) return metaTime;
+  const serverTime = Date.parse(row.updated_at || "");
+  return Number.isFinite(serverTime) ? serverTime : 0;
+}
+function applyCloudRow(row) {
+  cloudApplyingRemote = true;
+  state = row.data && typeof row.data === "object" && !Array.isArray(row.data) ? row.data : {};
+  delete state[blankDefaultKey()];
+  localStorage.setItem(storageKey, JSON.stringify(state));
+  if (row.current_view && row.current_view.term && row.current_view.exam) {
+    selectedTerm = row.current_view.term;
+    selectedExam = row.current_view.exam;
+    selectedSubject = normalizeSubjectForTerm(row.current_view.subject || selectedSubject, selectedTerm, selectedExam);
+  }
+  pageByPlan = {};
+  render();
+  cloudApplyingRemote = false;
+}
 async function pushCloudState(options = {}) {
   if (!cloudClient || !cloudUser) return false;
   cloudSyncing = true;
@@ -1738,9 +1798,24 @@ async function pushCloudState(options = {}) {
     setCloudDialogStatus("正在上傳雲端...");
   }
   try {
+    const localSnapshot = completeStateSnapshot();
+    const localTime = syncTimeOf(localSnapshot);
+    const { data: remoteRow, error: readError } = await cloudClient
+      .from("review_app_state")
+      .select("data,current_view,updated_at")
+      .eq("user_id", cloudUser.id)
+      .maybeSingle();
+    if (readError) throw readError;
+    if (remoteRow && remoteRow.data && cloudRowTime(remoteRow) > localTime) {
+      applyCloudRow(remoteRow);
+      const deviceName = syncDeviceNameOf(remoteRow.data);
+      setCloudStatus("雲端較新，已改用 " + deviceName + " 的資料", "ok");
+      if (!options.silent) setCloudDialogStatus("雲端資料較新，已下載 " + deviceName + " 的資料，未覆蓋雲端", "ok");
+      return true;
+    }
     const payload = {
       user_id: cloudUser.id,
-      data: completeStateSnapshot(),
+      data: localSnapshot,
       current_view: currentViewData(),
       app_version: storageKey
     };
@@ -1777,17 +1852,17 @@ async function pullCloudState(options = {}) {
       if (!options.silent) setCloudDialogStatus(state[blankDefaultKey()] ? "雲端尚無資料，已先建立空白資料" : "雲端尚無資料，已先上傳目前這份", "ok");
       return true;
     }
-    cloudApplyingRemote = true;
-    state = data.data && typeof data.data === "object" && !Array.isArray(data.data) ? data.data : {};
-    delete state[blankDefaultKey()];
-    localStorage.setItem(storageKey, JSON.stringify(state));
-    if (data.current_view && data.current_view.term && data.current_view.exam) {
-      selectedTerm = data.current_view.term;
-      selectedExam = data.current_view.exam;
-      selectedSubject = normalizeSubjectForTerm(data.current_view.subject || selectedSubject, selectedTerm, selectedExam);
+    const localSnapshot = completeStateSnapshot();
+    if (syncTimeOf(localSnapshot) > cloudRowTime(data)) {
+      cloudSyncing = false;
+      const uploaded = await pushCloudState({ silent: options.silent });
+      if (uploaded) {
+        setCloudStatus("本機較新，已上傳目前裝置資料", "ok");
+        if (!options.silent) setCloudDialogStatus("本機資料較新，已上傳目前裝置資料", "ok");
+      }
+      return uploaded;
     }
-    pageByPlan = {};
-    render();
+    applyCloudRow(data);
     setCloudStatus("雲端已同步", "ok");
     if (!options.silent) setCloudDialogStatus("已下載雲端資料", "ok");
     return true;
