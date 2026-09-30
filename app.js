@@ -1,11 +1,24 @@
-const subjects = ["國文", "英文", "數學", "社會", "生物"];
+const subjects = ["國文", "英文", "數學", "生物", "社會"];
 const eightGradeSubjects = ["國文", "英文", "數學", "理化", "社會"];
+const ninthGradeSubjects = ["國文", "英文", "數學", "理化", "地科", "社會"];
 const terms = ["七年級上學期", "七年級下學期", "八年級上學期", "八年級下學期", "九年級上學期", "九年級下學期"];
 const exams = ["第一次段考", "第二次段考", "第三次段考"];
+const ninthGradeExamItems = [
+  { term: "九年級上學期", exam: "第一次模擬考", label: "九上 第一次模擬考" },
+  { term: "九年級上學期", exam: "第一次段考", label: "九上 第一次段考" },
+  { term: "九年級上學期", exam: "第二次段考", label: "九上 第二次段考" },
+  { term: "九年級上學期", exam: "第二次模擬考", label: "九上 第二次模擬考" },
+  { term: "九年級上學期", exam: "第三次段考", label: "九上 第三次段考" },
+  { term: "九年級下學期", exam: "第三次模擬考", label: "九下 第三次模擬考" },
+  { term: "九年級下學期", exam: "第一次段考", label: "九下 第一次段考" },
+  { term: "九年級下學期", exam: "第四次模擬考", label: "九下 第四次模擬考" },
+  { term: "九年級下學期", exam: "畢業考", label: "九下 畢業考" },
+  { term: "九年級下學期", exam: "會考", label: "會考" }
+];
 const examMenuGroups = [
   { label: "七年級", grade: "七年級" },
   { label: "八年級", grade: "八年級" },
-  { label: "九年級", grade: "九年級" },
+  { label: "九年級", items: ninthGradeExamItems },
   {
     label: "自主學習",
     items: ["七年級寒假", "七升八的暑假", "八年級寒假", "八升九的暑假", "九年級寒假"].map((name) => ({
@@ -650,7 +663,37 @@ const defaultPlan = {
   "數學": ["課本例題", "基礎實力練習", "習作題目", "計算練習", "錯題訂正", "考卷練習", "成果評量"],
   "社會": ["課本重點整理", "地圖與圖表判讀", "講義複習", "題目練習", "錯題訂正", "時序整理", "段考卷訂正"],
   "生物": ["課本重點整理", "圖表觀察", "名詞解釋", "實驗整理", "題目練習", "錯題訂正", "段考卷訂正"],
-  "理化": ["課本重點整理", "公式與單位整理", "實驗觀察", "概念圖整理", "計算練習", "錯題訂正", "段考卷訂正"]
+  "理化": ["課本重點整理", "公式與單位整理", "實驗觀察", "概念圖整理", "計算練習", "錯題訂正", "段考卷訂正"],
+  "地科": ["課本重點整理", "圖表判讀", "地球科學名詞", "觀念整理", "題目練習", "錯題訂正", "模擬考訂正"]
+};
+
+const defaultSupplements = {
+  "_supplement-date-七年級下學期-第二次段考": `七年級下學期 第二次段考
+
+【考試時程】
+節次　　時間　　　　5/12（二）　　　　　5/13（三）
+第一節　08:00-08:50
+第二節　09:00-09:50　作文　　　　　　　　英文手寫
+　　　　　　　　　　　　　　　　（09:00-09:30 自習）
+　　　　　　　　　　　　　　　　（09:30-09:50 考試）
+第三節　10:10-11:00　　　　　　　　　　第二外語
+　　　　　　　　　　　　　　　　（10:10-10:30 自習）
+　　　　　　　　　　　　　　　　（10:30-11:00 考試）
+第四節　11:10-12:00　數學　　　　　　　　國文
+第五節　13:10-14:00
+第六節　14:10-15:00　自然
+第七節　15:10-16:00　社會　　　　　　　　英語
+
+【月考範圍填報】
+考試　　　月考範圍填報　　　　　　考試時間　劃卡　手寫　備註
+國文　　　L4~6、語二＋世說10則　　 50　　　 V
+作文　　　一篇　　　　　　　　　　 50　　　　　　V
+英文　　　L3~L4+Review 2　　　　　  50　　　 V
+英文手寫　L3~L4+Review 2　　　　　  20　　　　　　V　　含英聽考試
+數學　　　2-1~3-2　　　　　　　　　50　　　　　　V　　09:00-09:30 自習；09:30-09:50 考試
+社會　　　地理歷史公民 L3-4　　　　50　　　 V
+自然　　　2-3 至 3-5　　　　　　　 50　　　 V
+第二外語　範圍自訂　　　　　　　　 30　　　 V　　　　 10:10-10:30 自習；10:30-11:00 考試`
 };
 const animalInfo = {
   "短尾矮袋鼠": "短尾矮袋鼠主要分布在澳洲西部的島嶼與灌木林，體型小，臉部圓短。牠多在夜間或清晨活動，以草、嫩葉和樹皮等植物為食。短尾矮袋鼠行動靈活，常在低矮植被間覓食與休息。",
@@ -752,6 +795,7 @@ let selectedSubject = "國文";
 let selectedExam = "第一次段考";
 let learningStatusMode = "day";
 let learningStatusDate = todayString();
+let supplementEditType = "date";
 let cloudClient = null;
 let cloudUser = null;
 let cloudSaveTimer = null;
@@ -764,11 +808,12 @@ function isEightGradeTerm(term = selectedTerm) {
 function isEightGradeLearning(term = selectedTerm, exam = selectedExam) {
   return term === "自主學習" && (exam === "八年級寒假" || exam === "八升九的暑假");
 }
-function isNinthGradeScienceExam(term = selectedTerm, exam = selectedExam) {
-  return term === "九年級上學期" && (exam === "第一次段考" || exam === "第二次段考");
+function isNinthGradeTerm(term = selectedTerm) {
+  return term.startsWith("九年級");
 }
 function currentSubjects(term = selectedTerm, exam = selectedExam) {
-  return isEightGradeTerm(term) || isEightGradeLearning(term, exam) || isNinthGradeScienceExam(term, exam) ? eightGradeSubjects : subjects;
+  if (isNinthGradeTerm(term)) return ninthGradeSubjects;
+  return isEightGradeTerm(term) || isEightGradeLearning(term, exam) ? eightGradeSubjects : subjects;
 }
 function normalizeSubjectForTerm(subject, term = selectedTerm, exam = selectedExam) {
   const list = currentSubjects(term, exam);
@@ -881,7 +926,7 @@ function taskSignature(tasks) { return tasks.map((task) => (task.title || "") + 
 function normalizeTask(task, key, index) {
   return {
     id: task.id || key + "-" + index,
-    title: task.title || "未命名任務",
+    title: task.title ?? "",
     points: Math.max(0, Number(task.points) || 0),
     done: Boolean(task.done),
     date: task.date || "",
@@ -906,7 +951,10 @@ function formatTaskDate(value) {
   return digits.slice(0, 4) + "-" + digits.slice(4, 6) + "-" + digits.slice(6, 8);
 }
 function isFullTaskDate(value) { return /^\d{4}-\d{2}-\d{2}$/.test(String(value || "")); }
-function isTaskComplete(task) { return Boolean(task.done && isFullTaskDate(task.date)); }
+function hasTaskTitle(task) { return Boolean((task && task.title || "").trim()); }
+function activeTasks(tasks) { return tasks.filter(hasTaskTitle); }
+function activeTaskCount(tasks) { return activeTasks(tasks).length; }
+function isTaskComplete(task) { return Boolean(hasTaskTitle(task) && task.done && isFullTaskDate(task.date)); }
 function updateCurrentTask(index, changes) {
   const tasks = getTasks(selectedSubject, selectedExam, selectedTerm);
   const task = tasks[Number(index)];
@@ -1134,6 +1182,208 @@ function setExamDate(exam, value, term = selectedTerm) {
   saveState();
 }
 
+function examEndDateKey(exam, term = selectedTerm) {
+  return "exam-end-date-" + term + "-" + exam;
+}
+
+function getExamEndDate(exam, term = selectedTerm) {
+  return state[examEndDateKey(exam, term)] || "";
+}
+
+function setExamEndDate(exam, value, term = selectedTerm) {
+  if (value) {
+    state[examEndDateKey(exam, term)] = value;
+  } else {
+    delete state[examEndDateKey(exam, term)];
+  }
+  saveState();
+}
+
+function supplementKey(type, term = selectedTerm, exam = selectedExam) {
+  return "_supplement-" + type + "-" + term + "-" + exam;
+}
+
+function getSupplement(type, term = selectedTerm, exam = selectedExam) {
+  const key = supplementKey(type, term, exam);
+  return Object.prototype.hasOwnProperty.call(state, key) ? state[key] : defaultSupplements[key] || "";
+}
+
+function setSupplement(type, value, term = selectedTerm, exam = selectedExam) {
+  const key = supplementKey(type, term, exam);
+  const text = String(value || "").trim();
+  state[key] = text;
+  saveState();
+}
+
+function supplementImagesKey(type, term = selectedTerm, exam = selectedExam) {
+  return "_supplement-images-" + type + "-" + term + "-" + exam;
+}
+
+function getSupplementImages(type = supplementEditType, term = selectedTerm, exam = selectedExam) {
+  const items = state[supplementImagesKey(type, term, exam)];
+  return Array.isArray(items) ? items.map((item, index) => {
+    if (typeof item === "string") return { id: "image-" + index, name: "補充圖片 " + (index + 1), src: item };
+    return { id: item.id || "image-" + index, name: item.name || "補充圖片 " + (index + 1), src: item.src || "" };
+  }).filter((item) => item.src) : [];
+}
+
+function setSupplementImages(type, images, term = selectedTerm, exam = selectedExam) {
+  const key = supplementImagesKey(type, term, exam);
+  if (images.length) {
+    state[key] = images;
+  } else {
+    delete state[key];
+  }
+  saveState();
+}
+
+function setSupplementImageStatus(message = "", type = "") {
+  const status = document.querySelector("#supplementImageStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.className = "supplement-image-status" + (type ? " is-" + type : "");
+}
+
+function renderSupplementImages() {
+  const list = document.querySelector("#supplementImageList");
+  if (!list) return;
+  const images = getSupplementImages();
+  list.innerHTML = images.length ? images.map((image, index) => (
+    '<figure class="supplement-image-card"><button class="supplement-delete-image" type="button" data-delete-supplement-image="' + index + '" aria-label="刪除圖片">×</button><button class="supplement-preview-button" type="button" data-preview-supplement-image="' + index + '" aria-label="開啟圖片預覽：' + escapeHtml(image.name) + '"><img src="' + escapeHtml(image.src) + '" alt="' + escapeHtml(image.name) + '"></button><small>' + escapeHtml(image.name) + '</small></figure>'
+  )).join("") : '<p class="supplement-empty-images">尚未上傳圖片</p>';
+  list.querySelectorAll("[data-preview-supplement-image]").forEach((button) => button.addEventListener("click", () => {
+    const image = getSupplementImages()[Number(button.dataset.previewSupplementImage)];
+    if (image) openImagePreview(image.src, image.name);
+  }));
+  list.querySelectorAll("[data-delete-supplement-image]").forEach((button) => button.addEventListener("click", () => {
+    const nextImages = getSupplementImages();
+    nextImages.splice(Number(button.dataset.deleteSupplementImage), 1);
+    setSupplementImages(supplementEditType, nextImages);
+    renderSupplementImages();
+    renderSupplementButtons();
+    setSupplementImageStatus("圖片已刪除");
+  }));
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+async function compressSupplementImage(file) {
+  const source = await readFileAsDataUrl(file);
+  const image = await loadImage(source);
+  const maxSide = 1400;
+  const scale = Math.min(1, maxSide / Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height));
+  const width = Math.max(1, Math.round((image.naturalWidth || image.width) * scale));
+  const height = Math.max(1, Math.round((image.naturalHeight || image.height) * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, width, height);
+  context.drawImage(image, 0, 0, width, height);
+  return {
+    id: "supplement-image-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+    name: file.name || "補充圖片",
+    src: canvas.toDataURL("image/jpeg", 0.82)
+  };
+}
+
+async function uploadSupplementImages(files) {
+  const selectedFiles = Array.from(files || []).filter((file) => file.type.startsWith("image/"));
+  if (!selectedFiles.length) {
+    setSupplementImageStatus("請選擇圖片檔。", "error");
+    return;
+  }
+  setSupplementImageStatus("圖片處理中...");
+  try {
+    const newImages = [];
+    for (const file of selectedFiles) {
+      newImages.push(await compressSupplementImage(file));
+    }
+    setSupplementImages(supplementEditType, [...getSupplementImages(), ...newImages]);
+    renderSupplementImages();
+    renderSupplementButtons();
+    setSupplementImageStatus("已上傳 " + newImages.length + " 張圖片。");
+  } catch (error) {
+    setSupplementImageStatus("圖片上傳失敗，請換一張圖片再試。", "error");
+  }
+}
+
+function openImagePreview(src, name = "補充圖片") {
+  const dialog = document.querySelector("#imagePreviewDialog");
+  const image = document.querySelector("#imagePreviewImg");
+  if (!dialog || !image) return;
+  image.src = src;
+  image.alt = name;
+  dialog.classList.add("open");
+  dialog.setAttribute("aria-hidden", "false");
+}
+
+function closeImagePreview() {
+  const dialog = document.querySelector("#imagePreviewDialog");
+  const image = document.querySelector("#imagePreviewImg");
+  if (!dialog || !image) return;
+  dialog.classList.remove("open");
+  dialog.setAttribute("aria-hidden", "true");
+  image.removeAttribute("src");
+}
+
+function renderSupplementButtons() {
+  const dateButton = document.querySelector("#examDateInfo");
+  if (dateButton) {
+    const hasDateNote = Boolean(getSupplement("date")) || getSupplementImages("date").length > 0;
+    dateButton.classList.toggle("has-note", hasDateNote);
+    dateButton.title = hasDateNote ? "查看或編輯段考日期補充說明" : "新增段考日期補充說明";
+  }
+}
+
+function openSupplementDialog(type) {
+  supplementEditType = type;
+  const dialog = document.querySelector("#supplementDialog");
+  const eyebrow = document.querySelector("#supplementEyebrow");
+  const title = document.querySelector("#supplementTitle");
+  const text = document.querySelector("#supplementText");
+  if (!dialog || !eyebrow || !title || !text) return;
+  eyebrow.textContent = type === "date" ? "段考日期補充" : "時段補充";
+  title.textContent = selectedTerm + " " + selectedExam;
+  text.value = getSupplement(type);
+  renderSupplementImages();
+  setSupplementImageStatus("");
+  dialog.classList.add("open");
+  dialog.setAttribute("aria-hidden", "false");
+  window.setTimeout(() => text.focus(), 0);
+}
+
+function closeSupplementDialog() {
+  const dialog = document.querySelector("#supplementDialog");
+  if (!dialog) return;
+  dialog.classList.remove("open");
+  dialog.setAttribute("aria-hidden", "true");
+}
+
+function saveSupplementDialog() {
+  const text = document.querySelector("#supplementText");
+  setSupplement(supplementEditType, text ? text.value : "");
+  closeSupplementDialog();
+  renderSupplementButtons();
+}
+
 function noteOrderKey() {
   return "_nextNoteOrder";
 }
@@ -1143,16 +1393,23 @@ function nextNoteOrder() {
   return state[noteOrderKey()];
 }
 
-function countdownInfo(dateValue) {
+function countdownInfo(dateValue, endDateValue = "") {
   if (!dateValue) return { number: "--", caption: "尚未設定日期", tone: "unset" };
   const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const target = new Date(dateValue + "T00:00:00");
+  const endTarget = endDateValue ? new Date(endDateValue + "T00:00:00") : target;
   const diff = Math.round((target - start) / 86400000);
+  const endDiff = Math.round((endTarget - start) / 86400000);
+  if (diff <= 0 && endDiff >= 0) {
+    const dayNumber = Math.abs(diff) + 1;
+    return { number: String(dayNumber), caption: "段考第 " + dayNumber + " 天", tone: "urgent" };
+  }
   if (diff > 14) return { number: String(diff), caption: "距離段考還有 " + diff + " 天", tone: "future" };
   if (diff >= 8) return { number: String(diff), caption: "倒數14天內：還有 " + diff + " 天", tone: "warning" };
   if (diff >= 0) return { number: String(diff), caption: "最後七天：還有 " + diff + " 天", tone: "urgent" };
-  return { number: String(Math.abs(diff)), caption: "段考已過 " + Math.abs(diff) + " 天", tone: "past" };
+  const pastDays = Math.abs(endDiff);
+  return { number: String(pastDays), caption: "段考已過 " + pastDays + " 天", tone: "past" };
 }
 
 function todayString() {
@@ -1182,6 +1439,58 @@ function dateToString(date) {
 
 function dateDisplay(value) {
   return String(value || "").replace(/-/g, "/");
+}
+
+function compactDateDisplay(value) {
+  const date = dateFromString(value);
+  if (!date) return "";
+  return (date.getMonth() + 1) + "/" + date.getDate();
+}
+
+function compactExamDateRange(startValue, endValue) {
+  const startText = compactDateDisplay(startValue);
+  const endText = compactDateDisplay(endValue);
+  if (startText && endText && startText !== endText) return startText + "–" + endText;
+  return startText || endText || "尚未設定";
+}
+
+function examDatePromptValue(startValue, endValue) {
+  if (startValue && endValue && startValue !== endValue) return startValue + "～" + endValue;
+  return startValue || "";
+}
+
+function parseFlexibleExamDate(value, fallbackYear) {
+  const text = String(value || "").trim();
+  let match = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(text);
+  if (match) {
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(year, month - 1, day);
+    if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) return dateToString(date);
+    return "";
+  }
+  match = /^(\d{1,2})\/(\d{1,2})$/.exec(text);
+  if (match) {
+    const year = fallbackYear || new Date().getFullYear();
+    const month = Number(match[1]);
+    const day = Number(match[2]);
+    const date = new Date(year, month - 1, day);
+    if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) return dateToString(date);
+  }
+  return "";
+}
+
+function parseExamDateRange(value, currentStartValue) {
+  const normalized = String(value || "").trim().replace(/\s*(?:～|~|–|—|至|到)\s*/g, "～");
+  if (!normalized) return { start: "", end: "" };
+  const fallbackYear = dateFromString(currentStartValue)?.getFullYear() || new Date().getFullYear();
+  const parts = normalized.split("～").map((part) => part.trim()).filter(Boolean);
+  const start = parseFlexibleExamDate(parts[0], fallbackYear);
+  const end = parts[1] ? parseFlexibleExamDate(parts[1], dateFromString(start)?.getFullYear() || fallbackYear) : "";
+  if (!start || (parts[1] && !end)) return null;
+  if (end && dateFromString(end) < dateFromString(start)) return null;
+  return { start, end };
 }
 
 function addDays(date, amount) {
@@ -1248,6 +1557,21 @@ function statusTaskList(entries) {
   )).join("") + '</ul>';
 }
 
+function statusExamDayInfo(dateValue) {
+  const target = dateFromString(dateValue);
+  if (!target) return null;
+  const targetTime = target.getTime();
+  const item = allExamItems().find((examItem) => {
+    const startValue = getExamDate(examItem.exam, examItem.term);
+    const start = dateFromString(startValue);
+    if (!start) return false;
+    const end = dateFromString(getExamEndDate(examItem.exam, examItem.term)) || start;
+    return targetTime >= start.getTime() && targetTime <= end.getTime();
+  });
+  if (!item) return null;
+  return { label: termShortLabel(item.term) + " " + item.exam };
+}
+
 function renderLearningStatus() {
   const body = document.querySelector("#learningStatusBody");
   const title = document.querySelector("#learningStatusTitle");
@@ -1260,8 +1584,9 @@ function renderLearningStatus() {
 
   if (learningStatusMode === "day") {
     const dayEntries = grouped[learningStatusDate] || [];
+    const examInfo = statusExamDayInfo(learningStatusDate);
     title.textContent = dateDisplay(learningStatusDate) + " 學習狀況";
-    body.innerHTML = '<div class="status-summary"><h3>' + dateDisplay(learningStatusDate) + '</h3><span>完成 ' + dayEntries.length + ' 個任務</span></div>' + statusTaskList(dayEntries);
+    body.innerHTML = '<div class="status-summary' + (examInfo ? ' is-exam-day' : '') + '"><h3>' + dateDisplay(learningStatusDate) + (examInfo ? '<span class="status-exam-badge">段考日</span>' : '') + '</h3><span>' + (examInfo ? escapeHtml(examInfo.label) + '｜' : '') + '完成 ' + dayEntries.length + ' 個任務</span></div>' + statusTaskList(dayEntries);
     return;
   }
 
@@ -1273,7 +1598,8 @@ function renderLearningStatus() {
     body.innerHTML = '<div class="status-summary"><h3>本週完成</h3><span>完成 ' + weekEntries.length + ' 個任務</span></div><div class="status-week-grid">' + days.map((date, index) => {
       const key = dateToString(date);
       const dayEntries = grouped[key] || [];
-      return '<section class="status-day-column"><div class="status-day-head"><button type="button" data-status-date="' + key + '">' + ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][index] + ' ' + (date.getMonth() + 1) + '/' + date.getDate() + '</button><small>' + dayEntries.length + ' 個任務</small></div><ul class="status-day-items">' + (dayEntries.length ? dayEntries.map((entry) => '<li><span class="status-day-labels"><em>' + escapeHtml(entry.subject) + '</em>' + (entry.source === "note" ? '<span class="status-note-pill">備註</span>' : '') + '</span><span class="status-day-title">' + escapeHtml(entry.title) + '</span></li>').join("") : '<li class="status-empty-day">沒有完成任務</li>') + '</ul></section>';
+      const examInfo = statusExamDayInfo(key);
+      return '<section class="status-day-column' + (examInfo ? ' is-exam-day' : '') + '"><div class="status-day-head"><button type="button" data-status-date="' + key + '">' + ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][index] + ' ' + (date.getMonth() + 1) + '/' + date.getDate() + '</button><small>' + (examInfo ? '<span class="status-exam-badge">段考日</span>' : '') + dayEntries.length + ' 個任務</small></div><ul class="status-day-items">' + (dayEntries.length ? dayEntries.map((entry) => '<li><span class="status-day-labels"><em>' + escapeHtml(entry.subject) + '</em>' + (entry.source === "note" ? '<span class="status-note-pill">備註</span>' : '') + '</span><span class="status-day-title">' + escapeHtml(entry.title) + '</span></li>').join("") : '<li class="status-empty-day">沒有完成任務</li>') + '</ul></section>';
     }).join("") + '</div>';
   } else {
     const first = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
@@ -1289,7 +1615,8 @@ function renderLearningStatus() {
       const dayEntries = grouped[key] || [];
       const muted = date.getMonth() !== baseDate.getMonth();
       const isToday = key === todayString();
-      return '<section class="status-calendar-cell' + (muted ? ' is-muted' : '') + (isToday ? ' is-today' : '') + '"><div class="status-calendar-date"><button type="button" data-status-date="' + key + '">' + date.getDate() + '</button>' + (dayEntries.length ? '<span>' + dayEntries.length + '項</span>' : '') + '</div><div class="status-calendar-items">' + dayEntries.slice(0, 3).map((entry) => '<p>' + escapeHtml(entry.subject + (entry.source === "note" ? "｜備註｜" : "｜") + entry.title) + '</p>').join("") + (dayEntries.length > 3 ? '<p>還有 ' + (dayEntries.length - 3) + ' 項</p>' : '') + '</div></section>';
+      const examInfo = statusExamDayInfo(key);
+      return '<section class="status-calendar-cell' + (muted ? ' is-muted' : '') + (isToday ? ' is-today' : '') + (examInfo ? ' is-exam-day' : '') + '"><div class="status-calendar-date"><button type="button" data-status-date="' + key + '">' + date.getDate() + '</button>' + (examInfo ? '<span class="status-exam-badge">段考</span>' : dayEntries.length ? '<span>' + dayEntries.length + '項</span>' : '') + '</div><div class="status-calendar-items">' + dayEntries.slice(0, 3).map((entry) => '<p>' + escapeHtml(entry.subject + (entry.source === "note" ? "｜備註｜" : "｜") + entry.title) + '</p>').join("") + (dayEntries.length > 3 ? '<p>還有 ' + (dayEntries.length - 3) + ' 項</p>' : '') + '</div></section>';
     }).join("") + '</div>';
   }
 
@@ -1331,6 +1658,12 @@ function completedTaskCount(tasks) { return tasks.filter(isTaskComplete).length;
 function termShortLabel(term) {
   return term.replace("年級", "").replace("學期", "").replace("上", "上").replace("下", "下");
 }
+function examOptionTone(item) {
+  if (!item || item.group !== "九年級") return "";
+  if (item.exam.includes("模擬考")) return "mock";
+  if (item.exam === "會考") return "capstone";
+  return "";
+}
 function renderTabs() {
   const subjectTabs = document.querySelector("#subjectTabs");
   const examTabs = document.querySelector("#examTabs");
@@ -1344,7 +1677,8 @@ function renderTabs() {
     const placeholder = '<option value="" ' + (!hasCurrentValue ? 'selected' : '') + '>' + escapeHtml(group.label) + '</option>';
     const options = group.items.map((item) => {
       const value = item.term + "|" + item.exam;
-      return '<option value="' + escapeHtml(value) + '" ' + (value === currentExamValue ? 'selected' : '') + '>' + escapeHtml(item.label) + '</option>';
+      const tone = examOptionTone({ ...item, group: group.label });
+      return '<option class="' + (tone ? 'exam-option-' + tone : '') + '" value="' + escapeHtml(value) + '" ' + (value === currentExamValue ? 'selected' : '') + '>' + escapeHtml(item.label) + '</option>';
     }).join("");
     return '<select class="exam-select" aria-label="' + escapeHtml(group.label) + '選單" data-exam-group="' + escapeHtml(group.label) + '">' + placeholder + options + '</select>';
   }).join("");
@@ -1359,17 +1693,32 @@ function renderTabs() {
   }));
 }
 function renderExamDate() {
-  const input = document.querySelector("#examDateInput");
-  const label = document.querySelector("#countdownText");
+  const rangeButton = document.querySelector("#examDateRangeButton");
   const number = document.querySelector("#countdownNumber");
   const card = document.querySelector("#countdownCard");
-  if (!input || !label || !number || !card) return;
+  if (!rangeButton || !number || !card) return;
   const value = getExamDate(selectedExam);
-  const info = countdownInfo(value);
-  input.value = value;
+  const endValue = getExamEndDate(selectedExam);
+  const info = countdownInfo(value, endValue);
+  rangeButton.textContent = compactExamDateRange(value, endValue);
+  rangeButton.title = value ? examDatePromptValue(value, endValue) : "設定段考日期";
   number.textContent = info.number;
-  label.textContent = info.caption;
   card.dataset.tone = info.tone;
+}
+
+function openExamDateRangeEditor() {
+  const startValue = getExamDate(selectedExam);
+  const endValue = getExamEndDate(selectedExam);
+  const nextValue = window.prompt("請輸入段考日期，例如 2026-10-12 或 2026-10-12～2026-10-13", examDatePromptValue(startValue, endValue));
+  if (nextValue === null) return;
+  const parsed = parseExamDateRange(nextValue, startValue);
+  if (!parsed) {
+    window.alert("日期格式不正確，請輸入例如 2026-10-12 或 2026-10-12～2026-10-13。");
+    return;
+  }
+  setExamDate(selectedExam, parsed.start, selectedTerm);
+  setExamEndDate(selectedExam, parsed.end, selectedTerm);
+  renderExamDate();
 }
 
 function renderExamGrowth() {
@@ -1378,7 +1727,7 @@ function renderExamGrowth() {
   list.innerHTML = currentSubjects().map((subject) => {
     const tasks = getTasks(subject, selectedExam, selectedTerm);
     const score = completedTaskCount(tasks);
-    const target = tasks.length;
+    const target = activeTaskCount(tasks);
     const percent = target ? Math.round((score / target) * 100) : 0;
     return '<div class="growth-row"><span>' + escapeHtml(subject) + '</span><strong>' + score + '/' + target + '（' + percent + '%）</strong></div>';
   }).join("");
@@ -1390,7 +1739,7 @@ function renderAnimal() {
   const tasks = getTasks(selectedSubject, selectedExam, selectedTerm);
   const score = completedTaskCount(tasks);
   const [animalName, accent, habitat] = termAnimals[termKey] || animals[key] || animals[legacyPlanKey(normalizeSubjectForTerm(selectedSubject, "七年級下學期"), selectedExam)] || [selectedSubject, "#c8bddf", "tree"];
-  const target = tasks.length;
+  const target = activeTaskCount(tasks);
   const mature = target > 0 && score >= target;
   const percent = target ? Math.min(100, Math.round((score / target) * 100)) : 0;
   document.querySelector("#selectedPath").textContent = selectedTerm + "｜" + selectedSubject + "｜" + selectedExam;
@@ -1528,7 +1877,7 @@ function saveTaskEditor() {
     return {
       ...current,
       id: current.id || key + "-" + index,
-      title: (titleInput && titleInput.value.trim()) || "未命名任務"
+      title: titleInput ? titleInput.value.trim() : (current.title || "")
     };
   });
   tasks.splice(0, tasks.length, ...updatedTasks);
@@ -1542,10 +1891,10 @@ function renderTaskEditor() {
   const rows = document.querySelector("#taskEditorRows");
   if (!title || !rows) return;
   title.textContent = selectedTerm + " " + selectedSubject + " " + selectedExam;
-  rows.innerHTML = tasks.length ? tasks.map((task, index) => '<div class="task-editor-row" data-editor-row="' + index + '"><button class="drag-handle" type="button" draggable="true" data-editor-drag="' + index + '" aria-label="拖曳第 ' + (index + 1) + ' 個任務排序" title="拖曳排序">≡</button><span class="task-editor-number">' + (index + 1) + '.</span><input class="task-title-input" type="text" value="' + escapeHtml(task.title) + '" data-editor-title="' + index + '" aria-label="第 ' + (index + 1) + ' 個任務內容"><button class="delete-task-button" type="button" data-editor-delete="' + index + '" aria-label="刪除第 ' + (index + 1) + ' 個任務">×</button></div>').join("") : '<p class="empty-note">目前沒有任務，請新增任務。</p>';
+  rows.innerHTML = tasks.length ? tasks.map((task, index) => '<div class="task-editor-row" data-editor-row="' + index + '"><button class="drag-handle" type="button" draggable="true" data-editor-drag="' + index + '" aria-label="拖曳第 ' + (index + 1) + ' 個任務排序" title="拖曳排序">≡</button><span class="task-editor-number">' + (index + 1) + '.</span><input class="task-title-input" type="text" value="' + escapeHtml(task.title) + '" placeholder="新增任務" data-editor-title="' + index + '" aria-label="第 ' + (index + 1) + ' 個任務內容"><button class="delete-task-button" type="button" data-editor-delete="' + index + '" aria-label="刪除第 ' + (index + 1) + ' 個任務">×</button></div>').join("") : '<p class="empty-note">目前沒有任務，請新增任務。</p>';
   rows.querySelectorAll("[data-editor-title]").forEach((input) => input.addEventListener("input", () => {
     const task = tasks[Number(input.dataset.editorTitle)];
-    task.title = input.value.trim() || "未命名任務";
+    task.title = input.value.trim();
     markCustomTasks(key, tasks);
     render();
   }));
@@ -1611,14 +1960,15 @@ function renderOverview() {
   currentSubjects().forEach((subject) => {
     const tasks = getTasks(subject, selectedExam, selectedTerm);
     examScore += completedTaskCount(tasks);
-    examTarget += tasks.length;
+    examTarget += activeTaskCount(tasks);
   });
-  const totalPercent = examTarget ? Math.round((examScore / examTarget) * 100) : 0;
+  const totalPercent = examTarget ? ((examScore / examTarget) * 100).toFixed(1) : "0.0";
   document.querySelector("#totalScore").textContent = totalPercent + "%";
 }
 function render() {
   selectedSubject = normalizeSubjectForTerm(selectedSubject, selectedTerm, selectedExam);
-  document.querySelector(".topbar .eyebrow").textContent = selectedTerm;
+  const topbarInfo = document.querySelector(".topbar .eyebrow");
+  if (topbarInfo) topbarInfo.textContent = selectedTerm;
   renderTabs();
   renderAnimal();
   renderTasks();
@@ -1626,6 +1976,7 @@ function render() {
   renderExamDate();
   renderExamGrowth();
   renderOverview();
+  renderSupplementButtons();
   const learningDialog = document.querySelector("#learningStatusDialog");
   if (learningDialog && learningDialog.classList.contains("open")) renderLearningStatus();
 }
@@ -2034,7 +2385,8 @@ function allExamItems() {
   })));
 }
 function subjectsForExport(term, exam) {
-  return isEightGradeTerm(term) || isEightGradeLearning(term, exam) || isNinthGradeScienceExam(term, exam) ? eightGradeSubjects : subjects;
+  if (isNinthGradeTerm(term)) return ninthGradeSubjects;
+  return isEightGradeTerm(term) || isEightGradeLearning(term, exam) ? eightGradeSubjects : subjects;
 }
 function prepareCompleteBackupData() {
   if (state[blankDefaultKey()]) return JSON.parse(JSON.stringify(state));
@@ -2058,7 +2410,7 @@ function exportSheetsCsv() {
       getTasks(subject, item.exam, item.term).forEach((task, index) => {
         const complete = isTaskComplete(task);
         const subjectTasks = getTasks(subject, item.exam, item.term);
-        const target = subjectTasks.length;
+        const target = activeTaskCount(subjectTasks);
         const score = completedTaskCount(subjectTasks);
         rows.push([
           item.group,
@@ -2080,7 +2432,7 @@ function exportSheetsCsv() {
     });
   });
   const csv = "\uFEFF" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n");
-  downloadTextFile("段考成長任務表-Google-Sheets-" + stamp + ".csv", csv, "text/csv;charset=utf-8");
+  downloadTextFile("段考複習任務-Google-Sheets-" + stamp + ".csv", csv, "text/csv;charset=utf-8");
   setBackupStatus("已匯出 Sheets CSV", "ok");
 }
 function backupData() {
@@ -2088,7 +2440,7 @@ function backupData() {
   const stamp = now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + "-" + String(now.getHours()).padStart(2, "0") + String(now.getMinutes()).padStart(2, "0");
   const backupState = prepareCompleteBackupData();
   const payload = {
-    app: "段考成長任務表",
+    app: "段考複習任務",
     version: 2,
     storageKey,
     exportedAt: now.toISOString(),
@@ -2099,7 +2451,7 @@ function backupData() {
     },
     data: backupState
   };
-  downloadTextFile("段考成長任務表備份-" + stamp + ".json", JSON.stringify(payload, null, 2), "application/json");
+  downloadTextFile("段考複習任務備份-" + stamp + ".json", JSON.stringify(payload, null, 2), "application/json");
   setBackupStatus("已下載完整備份", "ok");
 }
 function importDataFromFile(file) {
@@ -2177,7 +2529,18 @@ document.querySelector("#cloudSyncNow").addEventListener("click", () => {
 });
 document.querySelector("#cloudBackup").addEventListener("click", createCloudBackup);
 document.querySelector("#openTracker").addEventListener("click", openTrackerDialog);
-document.querySelector("#examDateInput").addEventListener("change", (event) => { setExamDate(selectedExam, event.target.value, selectedTerm); renderExamDate(); });
+document.querySelector("#examDateRangeButton").addEventListener("click", openExamDateRangeEditor);
+document.querySelector("#examDateInfo").addEventListener("click", () => openSupplementDialog("date"));
+document.querySelector("#closeSupplement").addEventListener("click", closeSupplementDialog);
+document.querySelector("#saveSupplement").addEventListener("click", saveSupplementDialog);
+document.querySelector("#supplementDialog").addEventListener("click", (event) => { if (event.target.id === "supplementDialog") closeSupplementDialog(); });
+document.querySelector("#uploadSupplementImage").addEventListener("click", () => document.querySelector("#supplementImageInput").click());
+document.querySelector("#supplementImageInput").addEventListener("change", (event) => {
+  uploadSupplementImages(event.target.files);
+  event.target.value = "";
+});
+document.querySelector("#closeImagePreview").addEventListener("click", closeImagePreview);
+document.querySelector("#imagePreviewDialog").addEventListener("click", (event) => { if (event.target.id === "imagePreviewDialog") closeImagePreview(); });
 document.querySelector("#closeTracker").addEventListener("click", closeTrackerDialog);
 document.querySelector("#trackerDialog").addEventListener("click", (event) => { if (event.target.id === "trackerDialog") closeTrackerDialog(); });
 
@@ -2207,11 +2570,13 @@ document.querySelector("#taskEditorDialog").addEventListener("click", (event) =>
 document.querySelector("#editorAddTask").addEventListener("click", () => {
   const key = planKey(selectedSubject, selectedExam, selectedTerm);
   const tasks = getTasks(selectedSubject, selectedExam, selectedTerm);
-  tasks.push({ id: key + "-custom-" + Date.now(), title: "新增任務", points: 2, done: false, date: "", note: "", noteOrder: 0, noteDone: false, noteDoneDate: "" });
+  tasks.push({ id: key + "-custom-" + Date.now(), title: "", points: 2, done: false, date: "", note: "", noteOrder: 0, noteDone: false, noteDoneDate: "" });
   markCustomTasks(key, tasks);
   pageByPlan[key] = Math.ceil(tasks.length / tasksPerPage);
   render();
   renderTaskEditor();
+  const newInput = document.querySelector('#taskEditorRows [data-editor-title="' + (tasks.length - 1) + '"]');
+  if (newInput) newInput.focus();
 });
 // iPad 切到背景時計時器會暫停：離開前把還沒送出的修改立刻上傳；回到前景時再比對一次雲端。
 document.addEventListener("visibilitychange", () => {

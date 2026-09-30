@@ -4,25 +4,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://zcrfakiogxvmedaiwlyr.supabase.co wss://zcrfakiogxvmedaiwlyr.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
-    <title>段考成長任務表</title>
+    <title>段考複習任務</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="app-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">七年級下學期</p>
-          <h1>段考成長任務表</h1>
+          <h1>段考複習任務</h1>
         </div>
       </header>
 
       <section class="control-band" aria-label="科目與段考選擇">
         <div>
-          <span class="control-label">考試選單</span>
           <div id="examTabs" class="exam-menu"></div>
         </div>
         <div>
-          <span class="control-label">科目</span>
           <div class="subject-control-row">
             <div id="subjectTabs" class="segmented"></div>
             <button id="openLearningStatus" class="text-button learning-status-button" type="button">學習狀況</button>
@@ -36,12 +33,14 @@
           <section class="side-tools" aria-label="段考控制台">
             <div class="side-top-row">
               <div class="exam-date-box">
-                <label for="examDateInput">段考日期</label>
-                <input id="examDateInput" type="date">
+                <div class="exam-date-head">
+                  <div class="exam-date-title">段考日期</div>
+                  <button id="examDateInfo" class="info-button" type="button" aria-label="編輯段考日期補充說明" title="補充說明">!</button>
+                </div>
+                <button id="examDateRangeButton" class="exam-date-range" type="button">尚未設定</button>
                 <div id="countdownCard" class="countdown-card">
                   <div class="countdown-card-title">倒數日</div>
                   <div id="countdownNumber" class="countdown-number">--</div>
-                  <div id="countdownText" class="countdown-caption">尚未設定日期</div>
                 </div>
               </div>
               <div class="global-today-box" aria-label="今日任務">
@@ -100,7 +99,6 @@
         <section class="task-panel">
           <div class="task-head">
             <div>
-              <p class="eyebrow">任務清單</p>
               <h2 id="taskTitle"></h2>
             </div>
             <div class="task-actions">
@@ -233,6 +231,41 @@
           </div>
           <p id="cloudDialogStatus" class="cloud-dialog-status" aria-live="polite"></p>
         </div>
+      </div>
+    </div>
+
+    <div id="supplementDialog" class="tracker-dialog supplement-dialog" aria-hidden="true">
+      <div class="tracker-card supplement-card" role="dialog" aria-modal="true" aria-labelledby="supplementTitle">
+        <div class="tracker-card-head">
+          <div>
+            <p id="supplementEyebrow" class="eyebrow">補充說明</p>
+            <h2 id="supplementTitle">編輯說明</h2>
+          </div>
+          <button id="closeSupplement" class="icon-button" type="button" aria-label="關閉補充說明" title="關閉">×</button>
+        </div>
+        <div class="supplement-body">
+          <section class="supplement-image-section" aria-label="補充圖片">
+            <div class="supplement-image-head">
+              <strong>補充圖片</strong>
+              <button id="uploadSupplementImage" class="text-button" type="button">上傳圖片</button>
+              <input id="supplementImageInput" type="file" accept="image/*" multiple hidden>
+            </div>
+            <div id="supplementImageList" class="supplement-image-list"></div>
+            <p id="supplementImageStatus" class="supplement-image-status" aria-live="polite"></p>
+          </section>
+          <label class="supplement-text-label" for="supplementText">文字補充</label>
+          <textarea id="supplementText" class="supplement-textarea" placeholder="可以在這裡補充段考範圍、注意事項、複習提醒等。"></textarea>
+        </div>
+        <div class="task-editor-footer">
+          <button id="saveSupplement" class="text-button" type="button">儲存</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="imagePreviewDialog" class="image-preview-dialog" aria-hidden="true">
+      <div class="image-preview-card" role="dialog" aria-modal="true" aria-label="圖片預覽">
+        <button id="closeImagePreview" class="icon-button image-preview-close" type="button" aria-label="關閉圖片預覽" title="關閉">×</button>
+        <img id="imagePreviewImg" alt="補充圖片預覽">
       </div>
     </div>
 
